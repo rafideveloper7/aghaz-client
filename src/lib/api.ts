@@ -45,7 +45,17 @@ interface PaginatedResponse<T> {
 
 export const productsApi = {
   getAll: async (params: ProductsQueryParams = {}): Promise<PaginatedResponse<Product>> => {
-    const { data } = await api.get<ApiResponse>('/api/products', { params });
+    const apiParams = {
+      ...params,
+      sort:
+        params.sort === 'price-asc'
+          ? 'price_asc'
+          : params.sort === 'price-desc'
+            ? 'price_desc'
+            : params.sort,
+    };
+
+    const { data } = await api.get<ApiResponse>('/api/products', { params: apiParams });
     return data as PaginatedResponse<Product>;
   },
 

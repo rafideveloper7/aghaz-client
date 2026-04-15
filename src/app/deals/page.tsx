@@ -7,11 +7,11 @@ import { FiZap, FiClock } from 'react-icons/fi';
 import { useState } from 'react';
 
 export default function DealsPage() {
-  const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+  const [timeLeft, setTimeLeft] = useState({ hours: 3, minutes: 59, seconds: 59 });
 
   const { data, isLoading } = useProducts({
     sort: 'price-asc',
-    limit: 30,
+    limit: 30, 
   });
 
   // Countdown timer

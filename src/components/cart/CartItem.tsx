@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice, cn } from '@/lib/utils';
 import type { CartItem as CartItemType } from '@/types';
 import { motion } from 'framer-motion';
+import { SafeImage } from '@/components/ui/SafeImage';
 
 interface CartItemProps {
   item: CartItemType;
@@ -30,7 +30,7 @@ export function CartItem({ item }: CartItemProps) {
         href={`/product/${item.product}`}
         className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100 md:h-24 md:w-24"
       >
-        <Image
+        <SafeImage
           src={item.image || '/images/placeholder.png'}
           alt={item.title}
           fill
@@ -90,7 +90,7 @@ export function CartItemCompact({ item }: { item: CartItemType }) {
   return (
     <div className="flex items-center gap-3 py-2">
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-gray-100">
-        <Image src={item.image || '/images/placeholder.png'} alt={item.title} fill className="object-cover" />
+        <SafeImage src={item.image || '/images/placeholder.png'} alt={item.title} fill className="object-cover" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs text-text-primary">{item.title}</p>

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiMaximize } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
+import { SafeImage } from '@/components/ui/SafeImage';
 
 interface ProductSliderProps {
   images: string[];
@@ -47,7 +47,7 @@ export function ProductSlider({ images, title }: ProductSliderProps) {
               transition={{ duration: 0.3 }}
               className="absolute inset-0"
             >
-              <Image
+              <SafeImage
                 src={images[currentIndex]}
                 alt={`${title} - Image ${currentIndex + 1}`}
                 fill
@@ -108,7 +108,7 @@ export function ProductSlider({ images, title }: ProductSliderProps) {
                     : 'ring-1 ring-gray-200 opacity-60 hover:opacity-100'
                 )}
               >
-                <Image
+                <SafeImage
                   src={image}
                   alt={`${title} - Thumbnail ${index + 1}`}
                   fill
@@ -146,7 +146,7 @@ export function ProductSlider({ images, title }: ProductSliderProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="relative h-full w-full"
               >
-                <Image
+                <SafeImage
                   src={images[currentIndex]}
                   alt={`${title} - Image ${currentIndex + 1}`}
                   fill

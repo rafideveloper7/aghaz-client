@@ -7,6 +7,7 @@ import { CategoryFilter } from '@/components/common/CategoryFilter';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { InfiniteScroll } from '@/components/common/InfiniteScroll';
 import { useInfiniteProducts } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
 import { FiSliders } from 'react-icons/fi';
 import { useState } from 'react';
@@ -17,6 +18,9 @@ function ShopContent() {
   const category = searchParams.get('category') || '';
   const search = searchParams.get('search') || '';
   const [sort, setSort] = useState<SortOption>('latest');
+  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
+  const selectedCategory = categories?.find((item) => item.slug === category);
+  const resolvedCategory = category ? selectedCategory?._id : undefined;
 
   const {
     data,
@@ -25,13 +29,14 @@ function ShopContent() {
     isFetchingNextPage,
     isLoading,
   } = useInfiniteProducts({
-    category: category || undefined,
+    category: resolvedCategory,
     search: search || undefined,
     sort,
     limit: 20,
   });
 
   const allProducts = data?.pages.flatMap((page) => page) || [];
+  const isResolvingCategory = Boolean(category) && isCategoriesLoading;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
@@ -79,7 +84,7 @@ function ShopContent() {
       >
         <ProductGrid
           products={allProducts}
-          isLoading={isLoading && allProducts.length === 0}
+          isLoading={(isLoading || isResolvingCategory) && allProducts.length === 0}
         />
       </InfiniteScroll>
 

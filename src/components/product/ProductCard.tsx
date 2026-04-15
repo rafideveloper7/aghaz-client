@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { FiPlus, FiShoppingCart } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
@@ -8,6 +7,7 @@ import { formatPrice, calculateDiscount, cn } from '@/lib/utils';
 import type { Product } from '@/types';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { SafeImage } from '@/components/ui/SafeImage';
 
 interface ProductCardProps {
   product: Product;
@@ -41,7 +41,7 @@ export function ProductCard({ product }: ProductCardProps) {
       >
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
-          <Image
+          <SafeImage
             src={product.images[0] || '/images/placeholder.png'}
             alt={product.title}
             fill
