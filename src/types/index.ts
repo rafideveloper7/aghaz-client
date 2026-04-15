@@ -68,7 +68,6 @@ export interface OrderPayload {
 
 export interface OrderResponse {
   _id: string;
-  orderNumber: string;
   customerName: string;
   phone: string;
   city: string;
@@ -77,6 +76,27 @@ export interface OrderResponse {
   totalAmount: number;
   status: string;
   createdAt: string;
+}
+
+export interface SiteSettings {
+  _id: string;
+  logo: string;
+  logoWidth: number;
+  contactEmail: string;
+  contactPhone: string;
+  contactAddress: string;
+  whatsappNumber: string;
+  workingHours: string;
+  formSubmitEmail: string;
+  orderSuccessMessage: string;
+}
+
+export interface ContactMessagePayload {
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
 }
 
 export interface ProductsQueryParams {

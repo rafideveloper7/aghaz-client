@@ -23,10 +23,10 @@ export function slugify(text: string): string {
     .trim();
 }
 
-export function getWhatsAppUrl(message?: string): string {
-  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923001234567';
+export function getWhatsAppUrl(message?: string, number?: string): string {
+  const whatsappNumber = number || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923001234567';
   const defaultMsg = 'Hi! I need help with an order from Aghaz.com';
-  return `https://wa.me/${number}?text=${encodeURIComponent(message || defaultMsg)}`;
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message || defaultMsg)}`;
 }
 
 export function truncateText(text: string, maxLength: number): string {

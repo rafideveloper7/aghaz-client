@@ -6,6 +6,8 @@ import { FiTruck, FiShield, FiHeadphones, FiRefreshCw, FiMail, FiPhone, FiMapPin
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaYoutube, FaTiktok, FaPinterest, FaLinkedinIn } from 'react-icons/fa';
 import axios from 'axios';
 import { API_URL } from '@/lib/constants';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { getWhatsAppUrl } from '@/lib/utils';
 
 const values = [
   { icon: FiTruck, title: 'Fast Delivery', description: 'Quick nationwide shipping to your doorstep within 3-5 business days.' },
@@ -34,25 +36,24 @@ interface SocialLink {
 
 export default function AboutPage() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const { data: settings } = useSiteSettings();
   const [contact, setContact] = useState({ email: 'support@aghaz.com', phone: '+92 300 1234567', address: 'Lahore, Pakistan', whatsapp: '923001234567' });
 
   useEffect(() => {
     axios.get(`${API_URL}/api/footer-social`).then(res => {
       if (res.data.success) setSocialLinks(res.data.data || []);
     }).catch(() => {});
-
-    axios.get(`${API_URL}/api/settings`).then(res => {
-      if (res.data.success && res.data.data) {
-        const d = res.data.data;
-        setContact({
-          email: d.contactEmail || contact.email,
-          phone: d.contactPhone || contact.phone,
-          address: d.contactAddress || contact.address,
-          whatsapp: d.whatsappNumber || contact.whatsapp,
-        });
-      }
-    }).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!settings) return;
+    setContact(prev => ({
+      email: settings.contactEmail || prev.email,
+      phone: settings.contactPhone || prev.phone,
+      address: settings.contactAddress || prev.address,
+      whatsapp: settings.whatsappNumber || prev.whatsapp,
+    }));
+  }, [settings]);
 
   return (
     <div className="min-h-screen">
@@ -199,7 +200,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <a
-                href={`https://wa.me/${contact.whatsapp}`}
+                href={getWhatsAppUrl(undefined, contact.whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-green-600 px-6 py-3 font-bold text-white hover:bg-green-700 transition-colors"

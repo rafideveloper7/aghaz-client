@@ -4,24 +4,31 @@ import Link from 'next/link';
 import { useCartStore } from '@/store/cartStore';
 import { CheckoutForm } from '@/components/checkout/CheckoutForm';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
-import { Button } from '@/components/ui/Button';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const getItemCount = useCartStore((state) => state.getItemCount);
+  const [isOrderRedirecting, setIsOrderRedirecting] = useState(false);
 
   // Redirect to cart if empty
   useEffect(() => {
+    const latestOrder = typeof window !== 'undefined' ? sessionStorage.getItem('latest-order') : null;
+
+    if (latestOrder) {
+      setIsOrderRedirecting(true);
+      return;
+    }
+
     if (items.length === 0) {
       router.push('/cart');
     }
   }, [items.length, router]);
 
-  if (items.length === 0) {
+  if (items.length === 0 && !isOrderRedirecting) {
     return null;
   }
 

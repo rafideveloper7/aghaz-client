@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from './constants';
 import toast from 'react-hot-toast';
-import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse } from '@/types';
+import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse, SiteSettings, ContactMessagePayload } from '@/types';
 
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -88,8 +88,22 @@ export const categoriesApi = {
 
 export const ordersApi = {
   create: async (payload: OrderPayload): Promise<OrderResponse> => {
-    const { data } = await api.post<OrderResponse>('/api/orders', payload);
-    return data;
+    const { data } = await api.post<ApiResponse>('/api/orders', payload);
+    return data.data as OrderResponse;
+  },
+};
+
+export const settingsApi = {
+  get: async (): Promise<SiteSettings> => {
+    const { data } = await api.get<ApiResponse>('/api/settings');
+    return data.data as SiteSettings;
+  },
+};
+
+export const contactMessagesApi = {
+  create: async (payload: ContactMessagePayload) => {
+    const { data } = await api.post<ApiResponse>('/api/contact-messages', payload);
+    return data.data;
   },
 };
 

@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import type { OrderPayload } from '@/types';
 import { FiPhone, FiUser, FiMapPin, FiHome } from 'react-icons/fi';
+import { useState } from 'react';
 
 const checkoutSchema = z.object({
   customerName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -30,6 +31,7 @@ export function CheckoutForm() {
   const getTotal = useCartStore((state) => state.getTotal);
   const clearCart = useCartStore((state) => state.clearCart);
   const createOrder = useCreateOrder();
+  const [isCompletingOrder, setIsCompletingOrder] = useState(false);
 
   const {
     register,
@@ -52,6 +54,8 @@ export function CheckoutForm() {
     }
 
     try {
+      setIsCompletingOrder(true);
+
       const orderPayload: OrderPayload = {
         customerName: data.customerName,
         phone: data.phone,
@@ -61,10 +65,12 @@ export function CheckoutForm() {
         totalAmount: getTotal(),
       };
 
-      await createOrder.mutateAsync(orderPayload);
+      const order = await createOrder.mutateAsync(orderPayload);
+      sessionStorage.setItem('latest-order', JSON.stringify(order));
       clearCart();
-      router.push('/order-success');
+      router.replace(`/order-success?id=${encodeURIComponent(order._id)}`);
     } catch {
+      setIsCompletingOrder(false);
       toast.error('Failed to place order. Please try again.');
     }
   };
@@ -121,10 +127,10 @@ export function CheckoutForm() {
         variant="primary"
         size="lg"
         fullWidth
-        isLoading={isSubmitting || createOrder.isPending}
+        isLoading={isSubmitting || createOrder.isPending || isCompletingOrder}
         asMotion
       >
-        {isSubmitting || createOrder.isPending ? 'Placing Order...' : 'Place Order - COD'}
+        {isSubmitting || createOrder.isPending || isCompletingOrder ? 'Placing Order...' : 'Place Order - COD'}
       </Button>
     </form>
   );

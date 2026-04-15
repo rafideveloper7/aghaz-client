@@ -3,23 +3,26 @@
 import { useState } from 'react';
 import { FiMail, FiPhone, FiMapPin, FiMessageSquare, FiClock, FiSend } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { useCreateContactMessage } from '@/hooks/useContactMessages';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { getWhatsAppUrl } from '@/lib/utils';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [sending, setSending] = useState(false);
+  const { data: settings } = useSiteSettings();
+  const createContactMessage = useCreateContactMessage();
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
       toast.error('Please fill all fields');
       return;
     }
-    setSending(true);
-    setTimeout(() => {
+    try {
+      await createContactMessage.mutateAsync(form);
       toast.success('Message sent! We\'ll get back to you soon.');
-      setForm({ name: '', email: '', message: '' });
-      setSending(false);
-    }, 1000);
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch {}
   };
 
   return (
@@ -52,7 +55,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Address</p>
-                    <p className="text-sm text-gray-600 mt-0.5">Lahore, Pakistan</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{settings?.contactAddress || 'Lahore, Pakistan'}</p>
                   </div>
                 </div>
 
@@ -62,7 +65,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Phone</p>
-                    <p className="text-sm text-gray-600 mt-0.5">+92 300 1234567</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{settings?.contactPhone || '+92 300 1234567'}</p>
                   </div>
                 </div>
 
@@ -72,7 +75,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-sm text-gray-600 mt-0.5">support@aghaz.com</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{settings?.contactEmail || 'support@aghaz.com'}</p>
                   </div>
                 </div>
 
@@ -82,14 +85,14 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Working Hours</p>
-                    <p className="text-sm text-gray-600 mt-0.5">Mon - Sat: 9AM - 9PM</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{settings?.workingHours || 'Mon - Sat: 9AM - 9PM'}</p>
                   </div>
                 </div>
               </div>
 
               {/* WhatsApp Button */}
               <a
-                href="https://wa.me/923001234567"
+                href={getWhatsAppUrl('Hi! I want to contact Aghaz.', settings?.whatsappNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-green-500 px-6 py-3 font-bold text-white hover:bg-green-600 transition-colors"
@@ -124,6 +127,28 @@ export default function ContactPage() {
                       placeholder="your@email.com"
                     />
                   </div>
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
+                      <input
+                        type="text"
+                        value={form.phone}
+                        onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                        placeholder="03XX-XXXXXXX"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Subject</label>
+                      <input
+                        type="text"
+                        value={form.subject}
+                        onChange={e => setForm(prev => ({ ...prev, subject: e.target.value }))}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                        placeholder="How can we help?"
+                      />
+                    </div>
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
                     <textarea
@@ -136,10 +161,10 @@ export default function ContactPage() {
                   </div>
                   <button
                     type="submit"
-                    disabled={sending}
+                    disabled={createContactMessage.isPending}
                     className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 font-bold text-white hover:bg-emerald-600 transition-colors disabled:opacity-50"
                   >
-                    {sending ? (
+                    {createContactMessage.isPending ? (
                       <>
                         <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
                         Sending...

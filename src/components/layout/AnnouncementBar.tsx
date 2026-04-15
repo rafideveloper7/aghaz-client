@@ -42,10 +42,9 @@ export function AnnouncementBar() {
         return;
       }
 
-      const randomDelay = Math.floor(Math.random() * 7000) + 5000;
       timeoutId = setTimeout(() => {
         setIsVisible(true);
-      }, randomDelay);
+      }, 55000);
     });
 
     return () => {

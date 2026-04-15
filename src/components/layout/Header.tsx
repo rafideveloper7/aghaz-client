@@ -9,8 +9,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { SITE_NAME } from '@/lib/constants';
-import axios from 'axios';
-import { API_URL } from '@/lib/constants';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -29,7 +28,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [logo, setLogo] = useState<SiteLogo | null>(null);
+  const { data: settings } = useSiteSettings();
 
   useEffect(() => {
     setMounted(true);
@@ -44,14 +43,7 @@ export function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    // Fetch logo from settings
-    axios.get(`${API_URL}/api/settings`).then(res => {
-      if (res.data.success && res.data.data?.logo) {
-        setLogo({ url: res.data.data.logo, width: res.data.data.logoWidth || 32 });
-      }
-    }).catch(() => {});
-  }, []);
+  const logo = settings?.logo ? { url: settings.logo, width: settings.logoWidth || 32 } : null;
 
   const LogoContent = () => {
     if (logo?.url) {
@@ -63,7 +55,6 @@ export function Header() {
           height={40} 
           className="object-contain" 
           unoptimized
-          onError={() => setLogo(null)}
         />
       );
     }

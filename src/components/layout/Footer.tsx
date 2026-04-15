@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { FiMail, FiPhone, FiMapPin, FiExternalLink } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaYoutube, FaTiktok, FaPinterest, FaLinkedinIn } from 'react-icons/fa';
-import { getWhatsAppUrl, cn } from '@/lib/utils';
-import { SITE_NAME } from '@/lib/constants';
+import { getWhatsAppUrl } from '@/lib/utils';
+import { API_URL, SITE_NAME } from '@/lib/constants';
 import { useState, useEffect } from 'react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import axios from 'axios';
-import { API_URL } from '@/lib/constants';
 
 const socialIcons: Record<string, React.ElementType> = {
   facebook: FaFacebookF,
@@ -37,6 +37,7 @@ interface ContactInfo {
 
 export function Footer() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const { data: settings } = useSiteSettings();
   const [contact, setContact] = useState<ContactInfo>({
     email: 'support@aghaz.com',
     phone: '+92 300 1234567',
@@ -49,20 +50,17 @@ export function Footer() {
     axios.get(`${API_URL}/api/footer-social`).then(res => {
       if (res.data.success) setSocialLinks(res.data.data || []);
     }).catch(() => {});
-
-    // Fetch contact info
-    axios.get(`${API_URL}/api/settings`).then(res => {
-      if (res.data.success && res.data.data) {
-        const d = res.data.data;
-        setContact({
-          email: d.contactEmail || contact.email,
-          phone: d.contactPhone || contact.phone,
-          address: d.contactAddress || contact.address,
-          whatsapp: d.whatsappNumber || contact.whatsapp,
-        });
-      }
-    }).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!settings) return;
+    setContact(prev => ({
+      email: settings.contactEmail || prev.email,
+      phone: settings.contactPhone || prev.phone,
+      address: settings.contactAddress || prev.address,
+      whatsapp: settings.whatsappNumber || prev.whatsapp,
+    }));
+  }, [settings]);
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -145,7 +143,7 @@ export function Footer() {
             </ul>
             {/* WhatsApp */}
             <a
-              href={`https://wa.me/${contact.whatsapp}`}
+              href={getWhatsAppUrl(undefined, contact.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2 rounded-full bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"

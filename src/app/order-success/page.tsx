@@ -4,11 +4,41 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { getWhatsAppUrl } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { FiCheck, FiShoppingBag, FiMessageCircle } from 'react-icons/fi';
+import { FiCheck, FiShoppingBag } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import type { OrderResponse } from '@/types';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export default function OrderSuccessPage() {
-  const orderNumber = `AGH-${Date.now().toString(36).toUpperCase()}`;
+  const [orderNumber, setOrderNumber] = useState('');
+  const { data: settings } = useSiteSettings();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get('orderNumber') || params.get('id');
+    if (fromQuery) {
+      setOrderNumber(fromQuery.startsWith('undefined') ? '' : fromQuery);
+      sessionStorage.removeItem('latest-order');
+      return;
+    }
+
+    const storedOrder = sessionStorage.getItem('latest-order');
+    if (!storedOrder) {
+      return;
+    }
+
+    try {
+      const parsedOrder = JSON.parse(storedOrder) as OrderResponse;
+      if (parsedOrder._id) {
+        setOrderNumber(parsedOrder._id);
+      }
+    } catch {
+      // Ignore invalid cached order data
+    } finally {
+      sessionStorage.removeItem('latest-order');
+    }
+  }, []);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
@@ -54,7 +84,7 @@ export default function OrderSuccessPage() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-4 text-base text-text-secondary"
         >
-          Thank you for your order! We will contact you shortly to confirm your order details.
+          {settings?.orderSuccessMessage || 'Thank you for your order! We will contact you shortly to confirm your order details.'}
         </motion.p>
 
         {/* Order Number */}
@@ -64,8 +94,8 @@ export default function OrderSuccessPage() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-6 rounded-xl border border-primary/20 bg-primary-50 p-4"
         >
-          <p className="text-sm text-primary-600">Order Number</p>
-          <p className="mt-1 text-xl font-bold text-primary-800">{orderNumber}</p>
+          <p className="text-sm text-primary-600">Order Reference</p>
+          <p className="mt-1 text-xl font-bold text-primary-800">{orderNumber ? `#${orderNumber.slice(-6).toUpperCase()}` : 'Your order has been received'}</p>
         </motion.div>
 
         {/* What's Next */}
@@ -126,7 +156,7 @@ export default function OrderSuccessPage() {
               Continue Shopping
             </Button>
           </Link>
-          <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer">
+          <a href={getWhatsAppUrl(undefined, settings?.whatsappNumber)} target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               size="lg"
@@ -147,7 +177,7 @@ export default function OrderSuccessPage() {
           transition={{ duration: 0.5, delay: 0.8 }}
           className="mt-6 text-xs text-text-secondary"
         >
-          Need help with your order? Contact us on WhatsApp or call us at +92 300 1234567
+          Need help with your order? Contact us on WhatsApp or call us at {settings?.contactPhone || '+92 300 1234567'}
         </motion.p>
       </motion.div>
     </div>
