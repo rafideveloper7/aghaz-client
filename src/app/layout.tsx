@@ -5,7 +5,6 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomBar } from '@/components/layout/MobileBottomBar';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
-import { MarqueeBar } from '@/components/layout/MarqueeBar';
 import './globals.css';
 
 const inter = Inter({
@@ -50,12 +49,11 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <Providers>
-          <AnnouncementBar />
-          <MarqueeBar />
           <Header />
           <main className="min-h-screen pb-20 md:pb-0">{children}</main>
           <Footer />
           <MobileBottomBar />
+          <AnnouncementBar />
         </Providers>
       </body>
     </html>

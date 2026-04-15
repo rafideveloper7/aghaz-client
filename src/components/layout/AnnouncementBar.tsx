@@ -20,64 +20,101 @@ const fetchAnnouncement = async () => {
 
 export function AnnouncementBar() {
   const [announcement, setAnnouncement] = useState<{ text: string; bgColor: string; textColor: string; link?: string } | null>(null);
-  const [hidden, setHidden] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user dismissed in this session
-    const isHidden = sessionStorage.getItem('announcement-hidden');
+    const isHidden = sessionStorage.getItem('announcement-popup-hidden');
     if (isHidden) {
-      setHidden(true);
+      setDismissed(true);
       setLoading(false);
       return;
     }
 
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
     fetchAnnouncement().then(data => {
       setAnnouncement(data);
       setLoading(false);
+
+      if (!data) {
+        return;
+      }
+
+      const randomDelay = Math.floor(Math.random() * 7000) + 5000;
+      timeoutId = setTimeout(() => {
+        setIsVisible(true);
+      }, randomDelay);
     });
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const handleClose = () => {
-    setHidden(true);
-    sessionStorage.setItem('announcement-hidden', 'true');
+    setIsVisible(false);
+    setDismissed(true);
+    sessionStorage.setItem('announcement-popup-hidden', 'true');
   };
 
-  if (hidden || loading || !announcement) return null;
+  if (dismissed || loading || !announcement) return null;
 
   return (
-    <motion.div
-      initial={{ height: 0, opacity: 0 }}
-      animate={{ height: 'auto', opacity: 1 }}
-      exit={{ height: 0, opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="relative w-full overflow-hidden z-[60]"
-      style={{ backgroundColor: announcement.bgColor }}
-    >
-      <div className="flex items-center justify-center py-2.5 px-4 pr-12 max-w-screen-2xl mx-auto">
-        {announcement.link ? (
-          <a 
-            href={announcement.link} 
-            className="flex items-center gap-2 text-xs sm:text-sm font-medium hover:underline" 
-            style={{ color: announcement.textColor }}
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.96 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+          className="fixed bottom-24 right-4 z-[70] w-[calc(100vw-2rem)] max-w-sm sm:bottom-6 sm:right-6"
+        >
+          <div
+            className="relative overflow-hidden rounded-2xl border border-black/10 p-4 shadow-2xl backdrop-blur-sm"
+            style={{ backgroundColor: announcement.bgColor }}
           >
-            {announcement.text}
-            <FiArrowRight className="h-3.5 w-3.5 flex-shrink-0" />
-          </a>
-        ) : (
-          <span className="text-xs sm:text-sm font-medium text-center" style={{ color: announcement.textColor }}>
-            {announcement.text}
-          </span>
-        )}
-      </div>
-      <button
-        onClick={handleClose}
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-white/20 transition-all"
-        style={{ color: announcement.textColor }}
-        aria-label="Hide announcement"
-      >
-        <FiX className="h-4 w-4" />
-      </button>
-    </motion.div>
+            <button
+              onClick={handleClose}
+              className="absolute right-3 top-3 rounded-full p-1.5 transition-all hover:bg-white/20"
+              style={{ color: announcement.textColor }}
+              aria-label="Hide announcement"
+            >
+              <FiX className="h-4 w-4" />
+            </button>
+
+            <div className="pr-10">
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.2em] opacity-80"
+                style={{ color: announcement.textColor }}
+              >
+                Announcement
+              </p>
+
+              {announcement.link ? (
+                <a
+                  href={announcement.link}
+                  className="mt-2 inline-flex items-start gap-2 text-sm font-medium leading-6 hover:underline"
+                  style={{ color: announcement.textColor }}
+                >
+                  <span>{announcement.text}</span>
+                  <FiArrowRight className="mt-1 h-4 w-4 flex-shrink-0" />
+                </a>
+              ) : (
+                <p
+                  className="mt-2 text-sm font-medium leading-6"
+                  style={{ color: announcement.textColor }}
+                >
+                  {announcement.text}
+                </p>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

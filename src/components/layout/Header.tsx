@@ -30,7 +30,6 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [logo, setLogo] = useState<SiteLogo | null>(null);
-  const [announcementOffset, setAnnouncementOffset] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -52,26 +51,6 @@ export function Header() {
         setLogo({ url: res.data.data.logo, width: res.data.data.logoWidth || 32 });
       }
     }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    // Check if announcements are visible to adjust header position
-    const checkAnnouncements = () => {
-      const announcementHidden = sessionStorage.getItem('announcement-hidden');
-      const marqueeHidden = sessionStorage.getItem('marquee-hidden');
-      
-      let offset = 0;
-      // Each bar is approximately 36px (py-2.5 + padding)
-      if (!announcementHidden) offset += 36;
-      if (!marqueeHidden) offset += 36;
-      
-      setAnnouncementOffset(offset);
-    };
-
-    checkAnnouncements();
-    // Re-check after a short delay to allow components to mount
-    const timer = setTimeout(checkAnnouncements, 100);
-    return () => clearTimeout(timer);
   }, []);
 
   const LogoContent = () => {
@@ -99,12 +78,11 @@ export function Header() {
     <>
       <header
         className={cn(
-          'fixed left-0 right-0 z-50 transition-all duration-300',
+          'fixed left-0 right-0 top-0 z-50 transition-all duration-300',
           isScrolled
             ? 'bg-white/95 backdrop-blur-md shadow-md shadow-gray-200/50'
             : 'bg-white/80 backdrop-blur-md'
         )}
-        style={{ top: `${announcementOffset}px` }}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex h-16 sm:h-18 items-center justify-between">
