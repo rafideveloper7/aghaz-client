@@ -1,0 +1,119 @@
+'use client';
+
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { SearchBar } from '@/components/common/SearchBar';
+import { CategoryFilter } from '@/components/common/CategoryFilter';
+import { ProductGrid } from '@/components/product/ProductGrid';
+import { InfiniteScroll } from '@/components/common/InfiniteScroll';
+import { useInfiniteProducts } from '@/hooks/useProducts';
+import { ProductCardSkeleton } from '@/components/ui/Skeleton';
+import { FiSliders } from 'react-icons/fi';
+import { useState } from 'react';
+import type { SortOption } from '@/types';
+
+function ShopContent() {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category') || '';
+  const search = searchParams.get('search') || '';
+  const [sort, setSort] = useState<SortOption>('latest');
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteProducts({
+    category: category || undefined,
+    search: search || undefined,
+    sort,
+    limit: 20,
+  });
+
+  const allProducts = data?.pages.flatMap((page) => page) || [];
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-black text-text-primary md:text-3xl">
+          {search ? `Search: "${search}"` : category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'All Products'}
+        </h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          {allProducts.length} products found
+        </p>
+      </div>
+
+      {/* Search */}
+      <div className="mb-4">
+        <SearchBar initialValue={search} />
+      </div>
+
+      {/* Filters Row */}
+      <div className="mb-4 flex items-center gap-3">
+        <CategoryFilter />
+        <div className="relative shrink-0">
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortOption)}
+            className="h-10 appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            aria-label="Sort products"
+          >
+            <option value="latest">Latest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+          <FiSliders
+            size={14}
+            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary"
+          />
+        </div>
+      </div>
+
+      {/* Product Grid */}
+      <InfiniteScroll
+        onLoadMore={() => fetchNextPage()}
+        hasNextPage={hasNextPage || false}
+        isFetchingNextPage={isFetchingNextPage}
+      >
+        <ProductGrid
+          products={allProducts}
+          isLoading={isLoading && allProducts.length === 0}
+        />
+      </InfiniteScroll>
+
+      {/* Loading more indicator */}
+      {allProducts.length > 0 && isFetchingNextPage && (
+        <div className="mt-4 grid grid-cols-3 gap-2 md:grid-cols-4 lg:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ProductCardSkeleton key={`load-${i}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
+          <div className="mb-6">
+            <div className="h-8 w-48 rounded-lg bg-gray-200 animate-pulse" />
+            <div className="mt-2 h-4 w-32 rounded bg-gray-200 animate-pulse" />
+          </div>
+          <div className="mb-4 h-12 rounded-xl bg-gray-200 animate-pulse" />
+          <div className="grid grid-cols-3 gap-2 md:grid-cols-4 lg:grid-cols-5">
+            {Array.from({ length: 15 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <ShopContent />
+    </Suspense>
+  );
+}
