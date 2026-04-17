@@ -209,56 +209,87 @@ export function HeroSection() {
                   </div>
                 </div>
                 
-                {/* Right side hero image */}
+                {/* Right side hero image - Admin controlled */}
                 <motion.div 
-                  initial={{ opacity: 0, x: 30, rotateY: 5 }}
+                  initial={{ opacity: 0, x: 40, rotateY: 8 }}
                   animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                  transition={{ duration: 0.9, delay: 0.4, type: "spring" }}
+                  transition={{ duration: 1, delay: 0.5, type: "spring", stiffness: 100 }}
                   className="hidden lg:block relative"
                 >
                   <div className="relative">
-                    {/* 3D effect layers */}
-                    <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500/20 via-amber-500/30 to-transparent rounded-3xl blur-2xl opacity-60" />
-                    <div className="absolute inset-0 bg-white/5 rounded-3xl backdrop-blur-sm" />
+                    {/* Glow background */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-amber-500/30 rounded-3xl blur-3xl opacity-70 animate-pulse" />
                     
-                    {/* Hero product image */}
-                    <div className="relative aspect-square rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-emerald-500/20 transform-gpu perspective-1000">
-                      {slide.desktopBg ? (
-                        <Image
-                          src={slide.desktopBg}
-                          alt="Hero product"
-                          fill
-                          className="object-contain p-4"
-                          unoptimized
-                        />
-                      ) : slide.image ? (
-                        <Image
-                          src={slide.image}
-                          alt="Hero product"
-                          fill
-                          className="object-contain p-4"
-                          unoptimized
-                        />
-                      ) : null}
+                    {/* Hero image container */}
+                    <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-[2rem] border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_40px_100px_-30px_rgba(0,0,0,0.5)]">
+                      {/* Admin uploaded image */}
+                      <div className="relative aspect-[4/5]">
+                        {slide.desktopBg ? (
+                          <Image
+                            src={slide.desktopBg}
+                            alt={slide.title}
+                            fill
+                            className="object-contain p-6 drop-shadow-2xl"
+                            unoptimized
+                          />
+                        ) : slide.image ? (
+                          <Image
+                            src={slide.image}
+                            alt={slide.title}
+                            fill
+                            className="object-contain p-6 drop-shadow-2xl"
+                            unoptimized
+                          />
+                        ) : null}
+                      </div>
+                      
+                      {/* Badge overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-white/80 text-xs uppercase tracking-widest mb-1">Limited Offer</p>
+                            <p className="text-white font-bold text-xl">Up to 70% OFF</p>
+                          </div>
+                          <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl px-4 py-2">
+                            <span className="text-white font-bold">HOT 🔥</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
-                    {/* Floating badges */}
+                    {/* Floating elements */}
                     <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
-                      className="absolute -left-4 top-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 shadow-lg"
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.9 }}
+                      className="absolute -left-6 top-1/4 glass-card px-5 py-4 rounded-2xl shadow-xl"
                     >
-                      <span className="text-white font-bold text-lg">✓ Bestseller</span>
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                          <span className="text-emerald-400 text-lg">✓</span>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Fast Delivery</p>
+                          <p className="text-white/60 text-xs">2-5 Days</p>
+                        </div>
+                      </div>
                     </motion.div>
                     
                     <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 1 }}
-                      className="absolute -right-4 bottom-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl px-4 py-3 shadow-lg"
+                      initial={{ opacity: 0, scale: 0.8, y: -20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1.1 }}
+                      className="absolute -right-6 top-1/3 glass-card px-5 py-4 rounded-2xl shadow-xl"
                     >
-                      <span className="text-white font-bold text-lg">🔥 50% OFF</span>
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                          <span className="text-amber-400 text-lg">★</span>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Top Rated</p>
+                          <p className="text-white/60 text-xs">4.9/5 Stars</p>
+                        </div>
+                      </div>
                     </motion.div>
                   </div>
                 </motion.div>
