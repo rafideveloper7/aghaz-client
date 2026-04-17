@@ -37,55 +37,50 @@ export function ProductCard({ product }: ProductCardProps) {
       <motion.div
         whileHover={{ y: -2 }}
         transition={{ duration: 0.2 }}
-        className="flex flex-col h-full overflow-hidden rounded-lg sm:rounded-xl bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
+        className="flex flex-col h-full overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
       >
-        {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
           <SafeImage
             src={product.images[0] || '/images/placeholder.png'}
             alt={product.title}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+            sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
-          {/* Discount Badge */}
           {discount && discount > 0 && (
-            <span className="absolute left-1 top-1 rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold text-white sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-[10px] md:text-xs">
+            <span className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white md:text-xs">
               -{discount}%
             </span>
           )}
-          {/* Out of Stock Badge */}
           {!inStock && (
-            <span className="absolute left-1 top-1 rounded-full bg-gray-900 px-1.5 py-0.5 text-[9px] font-bold text-white sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-[10px] md:text-xs">
-              Out
+            <span className="absolute left-2 top-2 rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-bold text-white md:text-xs">
+              Out of Stock
             </span>
           )}
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col flex-1 p-1.5 sm:p-2 md:p-3">
-          <h3 className="line-clamp-2 text-[11px] font-medium text-text-primary sm:text-xs md:text-sm flex-1 leading-tight">
+        <div className="flex flex-col flex-1 p-1.5 md:p-3">
+          <h3 className="line-clamp-2 text-xs font-medium text-text-primary md:text-sm flex-1 leading-tight">
             {product.title}
           </h3>
 
-          <div className="mt-0.5 flex items-baseline gap-1 sm:mt-1 md:mt-2">
-            <span className="text-xs font-bold text-text-primary sm:text-sm md:text-base">
+          <div className="mt-0.5 flex items-baseline gap-1.5 md:mt-2">
+            <span className="text-sm font-bold text-text-primary md:text-base">
               {formatPrice(product.price)}
             </span>
             {product.comparePrice && product.comparePrice > product.price && (
-              <span className="hidden text-[10px] text-text-secondary line-through sm:inline sm:text-xs">
+              <span className="hidden text-xs text-text-secondary line-through md:inline">
                 {formatPrice(product.comparePrice)}
               </span>
             )}
           </div>
 
-          {/* Add to Cart Button - Compact on mobile */}
           <button
             onClick={handleAddToCart}
             disabled={!inStock}
             className={cn(
-              'mt-1 flex w-full items-center justify-center gap-1 rounded-lg py-1 text-[10px] font-semibold transition-all duration-200 sm:mt-1.5 sm:py-1.5 md:mt-3 md:h-11 md:py-0 md:text-sm flex-shrink-0',
+              'mt-1.5 flex w-full items-center justify-center gap-1 rounded-lg py-1 text-xs font-semibold transition-all duration-200 md:mt-3 md:h-11 md:py-0 md:text-sm flex-shrink-0',
               inStock
                 ? 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark'
                 : 'cursor-not-allowed bg-gray-100 text-text-secondary',
@@ -94,12 +89,12 @@ export function ProductCard({ product }: ProductCardProps) {
             aria-label={`Add ${product.title} to cart`}
           >
             {isAdding ? (
-              <FiShoppingCart size={12} className="sm:size-14" />
+              <FiShoppingCart size={14} />
             ) : (
-              <FiPlus size={12} className="sm:size-14" />
+              <FiPlus size={14} />
             )}
-            <span className="hidden sm:inline">
-              {inStock ? 'Add' : 'Out'}
+            <span className="hidden md:inline">
+              {inStock ? 'Add to Cart' : 'Out of Stock'}
             </span>
           </button>
         </div>

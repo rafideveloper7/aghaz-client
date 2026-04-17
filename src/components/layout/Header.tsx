@@ -28,7 +28,8 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { data: settings } = useSiteSettings();
+  const [logoError, setLogoError] = useState(false);
+  const { data: settings, isLoading: settingsLoading } = useSiteSettings();
 
   useEffect(() => {
     setMounted(true);
@@ -43,18 +44,19 @@ export function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const logo = settings?.logo ? { url: settings.logo, width: settings.logoWidth || 32 } : null;
+  const logo = settings?.logo && !logoError ? { url: settings.logo, width: settings.logoWidth || 32 } : null;
 
   const LogoContent = () => {
     if (logo?.url) {
       return (
         <Image 
           src={logo.url} 
-          alt={SITE_NAME} 
+          alt="Aghaz Logo" 
           width={logo.width} 
-          height={40} 
-          className="object-contain" 
+          height={36} 
+          className="object-contain h-9 w-auto" 
           unoptimized
+          onError={() => setLogoError(true)}
         />
       );
     }
@@ -171,13 +173,12 @@ export function Header() {
               <div className="flex h-16 items-center justify-between px-6 border-b">
                 <div className="flex items-center gap-2">
                   {logo?.url ? (
-                    <Image src={logo.url} alt={SITE_NAME} width={logo.width} height={32} className="object-contain" unoptimized />
+                    <Image src={logo.url} alt="Aghaz Logo" width={logo.width} height={32} className="object-contain h-8 w-auto" unoptimized onError={() => setLogoError(true)} />
                   ) : (
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700">
                       <span className="text-sm font-black text-white">A</span>
                     </div>
                   )}
-                  <span className="text-lg font-black">{SITE_NAME}</span>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}

@@ -6,13 +6,17 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiArrowRight } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { API_URL } from '@/lib/constants';
 import type { HeroSlide } from '@/types';
 
 const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
   try {
-    const { data } = await axios.get(`${API_URL}/api/hero-slides`);
+    const response = await fetch(`${API_URL}/api/hero-slides`);
+    if (!response.ok) {
+      console.warn('Hero slides API returned:', response.status);
+      return [];
+    }
+    const data = await response.json();
     return data.data || [];
   } catch (error) {
     console.error('Failed to fetch hero slides:', error);
@@ -21,7 +25,7 @@ const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
 };
 
 export function HeroSection() {
-  const { data: slides = [], isLoading, error } = useQuery({
+  const { data: slides = [], isLoading } = useQuery({
     queryKey: ['hero-slides'],
     queryFn: fetchHeroSlides,
     staleTime: 5 * 60 * 1000,
@@ -60,8 +64,8 @@ export function HeroSection() {
     );
   }
 
-  // Show error fallback
-  if (error || !slides.length) {
+  // Always show fallback banner (hero not configured or API failed)
+  if (!slides.length) {
     return (
       <section className="relative flex min-h-[400px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[500px]">
         <div className="mx-auto max-w-7xl px-4 py-12 text-center">

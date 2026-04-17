@@ -70,11 +70,14 @@ export function ProductReviews({ productId, productTitle }: ProductReviewsProps)
   const fetchReviews = async () => {
     try {
       const data = await reviewsApi.getForProduct(productId);
-      setReviews(data.reviews);
-      setAverageRating(data.averageRating);
-      setTotalReviews(data.totalReviews);
-    } catch (error) {
-      console.error('Failed to fetch reviews:', error);
+      setReviews(data.reviews || []);
+      setAverageRating(data.averageRating || 0);
+      setTotalReviews(data.totalReviews || 0);
+    } catch (error: any) {
+      console.warn('No reviews found or error fetching reviews:', error?.message || error);
+      setReviews([]);
+      setAverageRating(0);
+      setTotalReviews(0);
     }
   };
 
