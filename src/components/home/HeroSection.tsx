@@ -16,8 +16,10 @@ const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
       console.warn('Hero slides API returned:', response.status);
       return [];
     }
-    const data = await response.json();
-    return data.data || [];
+    const json = await response.json();
+    console.log('Hero API response:', json);
+    const slides = json.data || [];
+    return Array.isArray(slides) ? slides : [];
   } catch (error) {
     console.error('Failed to fetch hero slides:', error);
     return [];
@@ -75,6 +77,7 @@ export function HeroSection() {
 
   // Always show fallback banner (hero not configured or API failed)
   if (!slides.length) {
+    console.log('No slides found, showing fallback');
     return (
       <section className="relative flex min-h-[400px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[500px]">
         <div className="mx-auto max-w-7xl px-4 py-12 text-center">
@@ -105,6 +108,7 @@ export function HeroSection() {
   }
 
   const slide = slides[current];
+  console.log('Current slide:', slide);
 
   // Determine which image to use based on screen size
   const getImageSrc = () => {
