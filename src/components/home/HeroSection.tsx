@@ -11,15 +11,21 @@ import { API_URL } from '@/lib/constants';
 import type { HeroSlide } from '@/types';
 
 const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
-  const { data } = await axios.get(`${API_URL}/api/hero-slides`);
-  return data.data || [];
+  try {
+    const { data } = await axios.get(`${API_URL}/api/hero-slides`);
+    return data.data || [];
+  } catch (error) {
+    console.error('Failed to fetch hero slides:', error);
+    return [];
+  }
 };
 
 export function HeroSection() {
-  const { data: slides = [], isLoading } = useQuery({
+  const { data: slides = [], isLoading, error } = useQuery({
     queryKey: ['hero-slides'],
     queryFn: fetchHeroSlides,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   const [current, setCurrent] = useState(0);
@@ -45,7 +51,7 @@ export function HeroSection() {
   // Show loading skeleton
   if (isLoading) {
     return (
-      <section className="relative flex min-h-[560px] items-center justify-center bg-gray-100 md:min-h-[720px]">
+      <section className="relative flex min-h-[400px] items-center justify-center bg-gray-100 md:min-h-[500px]">
         <div className="animate-pulse space-y-4 text-center">
           <div className="h-8 bg-gray-200 rounded w-64 mx-auto" />
           <div className="h-4 bg-gray-200 rounded w-48 mx-auto" />
@@ -54,9 +60,35 @@ export function HeroSection() {
     );
   }
 
-  // Show nothing if no slides configured
-  if (!slides.length) {
-    return null;
+  // Show error fallback
+  if (error || !slides.length) {
+    return (
+      <section className="relative flex min-h-[400px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[500px]">
+        <div className="mx-auto max-w-7xl px-4 py-12 text-center">
+          <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+            Discover Smart Living
+          </h1>
+          <p className="mt-4 max-w-xl text-lg leading-7 text-white/78 mx-auto">
+            Curated products that make your life easier, smarter, and more enjoyable.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+            >
+              Shop Now
+              <FiArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/checkout"
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
+            >
+              Try Faster Checkout
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   const slide = slides[current];

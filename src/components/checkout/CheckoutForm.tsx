@@ -42,18 +42,27 @@ export function CheckoutForm() {
   const grandTotal = subtotal + deliveryFee;
   const paymentMethods = useMemo(() => {
     const methods = settings?.paymentMethods?.filter((method) => method.isActive) || [];
-    return methods.length > 0
-      ? [...methods].sort((a, b) => a.sortOrder - b.sortOrder)
-      : [
-          {
-            code: 'cod',
-            label: 'Cash on Delivery',
-            type: 'cod' as const,
-            instructions: 'Pay when you receive your order.',
-            isActive: true,
-            sortOrder: 0,
-          },
-        ];
+    if (methods.length > 0) {
+      return [...methods].sort((a, b) => a.sortOrder - b.sortOrder);
+    }
+    return [
+      {
+        code: 'cod',
+        label: 'Cash on Delivery',
+        type: 'cod' as const,
+        instructions: 'Pay when you receive your order.',
+        isActive: true,
+        sortOrder: 0,
+      },
+      {
+        code: 'direct',
+        label: 'Direct Payment',
+        type: 'other' as const,
+        instructions: 'Transfer to our account and share the reference.',
+        isActive: true,
+        sortOrder: 1,
+      },
+    ];
   }, [settings?.paymentMethods]);
   const selectedPaymentMethod =
     paymentMethods.find((method) => method.code === selectedPaymentCode) || paymentMethods[0];
