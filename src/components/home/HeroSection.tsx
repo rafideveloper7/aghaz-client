@@ -13,15 +13,12 @@ const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
   try {
     const response = await fetch(`${API_URL}/api/hero-slides`);
     if (!response.ok) {
-      console.warn('Hero slides API returned:', response.status);
       return [];
     }
     const json = await response.json();
-    console.log('Hero API response:', json);
-    const slides = json.data || [];
+    const slides = json.data;
     return Array.isArray(slides) ? slides : [];
   } catch (error) {
-    console.error('Failed to fetch hero slides:', error);
     return [];
   }
 };
@@ -77,7 +74,6 @@ export function HeroSection() {
 
   // Always show fallback banner (hero not configured or API failed)
   if (!slides.length) {
-    console.log('No slides found, showing fallback');
     return (
       <section className="relative flex min-h-[400px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[500px]">
         <div className="mx-auto max-w-7xl px-4 py-12 text-center">
@@ -108,7 +104,6 @@ export function HeroSection() {
   }
 
   const slide = slides[current];
-  console.log('Current slide:', slide);
 
   // Determine which image to use based on screen size
   const getImageSrc = () => {
@@ -136,55 +131,15 @@ export function HeroSection() {
         >
           {/* Background Images */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black">
-            {/* Mobile background - only shown on small screens */}
-            {slide.mobileBg && isValidImage(slide.mobileBg) ? (
-              <Image
-                src={slide.mobileBg}
-                alt={slide.title}
-                fill
-                priority
-                className="object-cover md:hidden"
-                sizes="100vw"
-                unoptimized
-                onError={() => handleImageError(slide.mobileBg)}
-              />
-            ) : isValidImage(slide.image) ? (
-              /* Fallback to main image on mobile if no mobileBg */
+            {slide.image ? (
               <Image
                 src={slide.image}
                 alt={slide.title}
                 fill
                 priority
-                className="object-cover md:hidden"
+                className="object-cover"
                 sizes="100vw"
                 unoptimized
-                onError={() => handleImageError(slide.image)}
-              />
-            ) : null}
-
-            {/* Desktop background - only shown on medium+ screens */}
-            {slide.desktopBg && isValidImage(slide.desktopBg) ? (
-              <Image
-                src={slide.desktopBg}
-                alt={slide.title}
-                fill
-                priority
-                className="object-cover hidden md:block"
-                sizes="100vw"
-                unoptimized
-                onError={() => handleImageError(slide.desktopBg)}
-              />
-            ) : isValidImage(slide.image) ? (
-              /* Fallback to main image on desktop if no desktopBg */
-              <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                priority
-                className="object-cover hidden md:block"
-                sizes="100vw"
-                unoptimized
-                onError={() => handleImageError(slide.image)}
               />
             ) : null}
           </div>
