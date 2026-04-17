@@ -139,15 +139,15 @@ export function HeroSection() {
           <div className="absolute right-[8%] top-[18%] h-28 w-28 rounded-full bg-amber-300/20 blur-3xl md:h-44 md:w-44" />
 
           {/* Content */}
-          <div className="relative flex min-h-[560px] items-center md:min-h-[720px]">
+<div className="relative flex min-h-[560px] items-center md:min-h-[720px]">
             <div className="mx-auto w-full max-w-7xl px-4">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_320px]"
+                className="grid items-center gap-8 lg:grid-cols-[1fr_400px]"
               >
-                <div className="max-w-3xl">
+                <div className="max-w-2xl">
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -180,14 +180,91 @@ export function HeroSection() {
                         {slide.mobileCtaText || slide.ctaText || 'Shop Now'}
                         <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                       </Link>
+                    </motion.div>
+                  </div>
+
+                  <div className="hidden md:block">
+                    <h1 className="font-display text-5xl font-black leading-[0.95] text-white lg:text-6xl">
+                      {slide.desktopTitle || slide.title}
+                    </h1>
+                    {(slide.desktopSubtitle || slide.subtitle) && (
+                      <p className="mt-5 max-w-2xl text-lg leading-8 text-white/78 lg:text-xl">
+                        {slide.desktopSubtitle || slide.subtitle}
+                      </p>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      className="mt-9 flex flex-wrap gap-4"
+                    >
                       <Link
-                        href="/checkout"
-                        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
+                        href={slide.desktopCtaLink || slide.ctaLink || '/shop'}
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
                       >
-                        Try Faster Checkout
+                        {slide.desktopCtaText || slide.ctaText || 'Shop Now'}
+                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </motion.div>
                   </div>
+                </div>
+                
+                {/* Right side hero image */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 30, rotateY: 5 }}
+                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                  transition={{ duration: 0.9, delay: 0.4, type: "spring" }}
+                  className="hidden lg:block relative"
+                >
+                  <div className="relative">
+                    {/* 3D effect layers */}
+                    <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500/20 via-amber-500/30 to-transparent rounded-3xl blur-2xl opacity-60" />
+                    <div className="absolute inset-0 bg-white/5 rounded-3xl backdrop-blur-sm" />
+                    
+                    {/* Hero product image */}
+                    <div className="relative aspect-square rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-emerald-500/20 transform-gpu perspective-1000">
+                      {slide.desktopBg ? (
+                        <Image
+                          src={slide.desktopBg}
+                          alt="Hero product"
+                          fill
+                          className="object-contain p-4"
+                          unoptimized
+                        />
+                      ) : slide.image ? (
+                        <Image
+                          src={slide.image}
+                          alt="Hero product"
+                          fill
+                          className="object-contain p-4"
+                          unoptimized
+                        />
+                      ) : null}
+                    </div>
+                    
+                    {/* Floating badges */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.8 }}
+                      className="absolute -left-4 top-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 shadow-lg"
+                    >
+                      <span className="text-white font-bold text-lg">✓ Bestseller</span>
+                    </motion.div>
+                    
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1 }}
+                      className="absolute -right-4 bottom-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl px-4 py-3 shadow-lg"
+                    >
+                      <span className="text-white font-bold text-lg">🔥 50% OFF</span>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
 
                   <div className="hidden md:block">
                     <h1 className="font-display text-5xl font-black leading-[0.95] text-white lg:text-7xl">
