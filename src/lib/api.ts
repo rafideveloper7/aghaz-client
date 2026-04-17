@@ -95,7 +95,11 @@ export const ordersApi = {
 
 export const settingsApi = {
   get: async (): Promise<SiteSettings> => {
-    const { data } = await api.get<ApiResponse>('/api/settings');
+    const response = await fetch(`${API_URL}/api/settings`);
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to fetch settings');
+    }
     return data.data as SiteSettings;
   },
 };
