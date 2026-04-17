@@ -44,19 +44,23 @@ export function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const logo = settings?.logo && !logoError ? { url: settings.logo, width: settings.logoWidth || 32 } : null;
+  const logoUrl = settings?.logo?.trim();
+  const hasValidLogo = logoUrl && !logoError;
 
   const LogoContent = () => {
-    if (logo?.url) {
+    if (hasValidLogo) {
       return (
         <Image 
-          src={logo.url} 
+          src={logoUrl!} 
           alt="Aghaz Logo" 
-          width={logo.width} 
+          width={settings?.logoWidth || 32} 
           height={36} 
           className="object-contain h-9 w-auto" 
           unoptimized
-          onError={() => setLogoError(true)}
+          onError={() => {
+            console.warn('Logo failed to load:', logoUrl);
+            setLogoError(true);
+          }}
         />
       );
     }
@@ -82,9 +86,6 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <LogoContent />
-              {/* <span className="hidden sm:inline text-xl font-black tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                {SITE_NAME}
-              </span> */}
             </Link>
 
             {/* Desktop Nav */}
@@ -172,8 +173,8 @@ export function Header() {
             >
               <div className="flex h-16 items-center justify-between px-6 border-b">
                 <div className="flex items-center gap-2">
-                  {logo?.url ? (
-                    <Image src={logo.url} alt="Aghaz Logo" width={logo.width} height={32} className="object-contain h-8 w-auto" unoptimized onError={() => setLogoError(true)} />
+                  {hasValidLogo ? (
+                    <Image src={logoUrl!} alt="Aghaz Logo" width={settings?.logoWidth || 32} height={32} className="object-contain h-8 w-auto" unoptimized onError={() => setLogoError(true)} />
                   ) : (
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700">
                       <span className="text-sm font-black text-white">A</span>

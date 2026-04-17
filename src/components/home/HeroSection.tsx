@@ -34,6 +34,15 @@ export function HeroSection() {
 
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  const handleImageError = useCallback((imageUrl: string) => {
+    setImageErrors(prev => ({ ...prev, [imageUrl]: true }));
+  }, []);
+
+  const isValidImage = useCallback((url: string) => {
+    return url && url.trim() && !imageErrors[url];
+  }, [imageErrors]);
 
   const nextSlide = useCallback(() => {
     setCurrent(prev => (prev + 1) % (slides.length || 1));
@@ -124,7 +133,7 @@ export function HeroSection() {
           {/* Background Images */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black">
             {/* Mobile background - only shown on small screens */}
-            {slide.mobileBg ? (
+            {slide.mobileBg && isValidImage(slide.mobileBg) ? (
               <Image
                 src={slide.mobileBg}
                 alt={slide.title}
@@ -132,9 +141,10 @@ export function HeroSection() {
                 priority
                 className="object-cover md:hidden"
                 sizes="100vw"
-                unoptimized={slide.mobileBg.startsWith('data:')}
+                unoptimized
+                onError={() => handleImageError(slide.mobileBg)}
               />
-            ) : (
+            ) : isValidImage(slide.image) ? (
               /* Fallback to main image on mobile if no mobileBg */
               <Image
                 src={slide.image}
@@ -143,12 +153,13 @@ export function HeroSection() {
                 priority
                 className="object-cover md:hidden"
                 sizes="100vw"
-                unoptimized={slide.image.startsWith('data:')}
+                unoptimized
+                onError={() => handleImageError(slide.image)}
               />
-            )}
+            ) : null}
 
             {/* Desktop background - only shown on medium+ screens */}
-            {slide.desktopBg ? (
+            {slide.desktopBg && isValidImage(slide.desktopBg) ? (
               <Image
                 src={slide.desktopBg}
                 alt={slide.title}
@@ -156,9 +167,10 @@ export function HeroSection() {
                 priority
                 className="object-cover hidden md:block"
                 sizes="100vw"
-                unoptimized={slide.desktopBg.startsWith('data:')}
+                unoptimized
+                onError={() => handleImageError(slide.desktopBg)}
               />
-            ) : (
+            ) : isValidImage(slide.image) ? (
               /* Fallback to main image on desktop if no desktopBg */
               <Image
                 src={slide.image}
@@ -167,9 +179,10 @@ export function HeroSection() {
                 priority
                 className="object-cover hidden md:block"
                 sizes="100vw"
-                unoptimized={slide.image.startsWith('data:')}
+                unoptimized
+                onError={() => handleImageError(slide.image)}
               />
-            )}
+            ) : null}
           </div>
 
           {/* Gradient Overlay */}
