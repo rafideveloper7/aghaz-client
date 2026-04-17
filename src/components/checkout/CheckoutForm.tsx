@@ -117,7 +117,7 @@ export function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
       <Input
         label="Full Name"
         placeholder="Enter your full name"

@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from './constants';
 import toast from 'react-hot-toast';
-import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse, SiteSettings, ContactMessagePayload } from '@/types';
+import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse, SiteSettings, ContactMessagePayload, Review } from '@/types';
 
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -100,10 +100,32 @@ export const settingsApi = {
   },
 };
 
+export const reviewsApi = {
+  getForProduct: async (productId: string) => {
+    const { data } = await api.get<ApiResponse>(`/api/reviews/product/${productId}`);
+    return data.data as { reviews: Review[]; averageRating: number; totalReviews: number; pagination: any };
+  },
+  create: async (payload: { product: string; name: string; rating: number; comment: string; image?: string }) => {
+    const { data } = await api.post<ApiResponse>('/api/reviews', payload);
+    return data.data as Review;
+  },
+};
+
 export const contactMessagesApi = {
   create: async (payload: ContactMessagePayload) => {
     const { data } = await api.post<ApiResponse>('/api/contact-messages', payload);
     return data.data;
+  },
+};
+
+export const uploadReviewApi = {
+  uploadImage: async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const { data } = await api.post<ApiResponse>('/api/upload/review-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.data as { url: string; fileId: string };
   },
 };
 

@@ -31,7 +31,7 @@ export function MobileBottomBar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="border-t border-gray-200 bg-white/95 backdrop-blur-md">
-        <div className="flex items-center justify-around px-2 py-1">
+        <div className="flex items-center justify-around px-1 py-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -40,21 +40,21 @@ export function MobileBottomBar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'relative flex flex-1 flex-col items-center justify-center py-2 transition-colors',
+                  'relative flex flex-1 flex-col items-center justify-center py-1.5 transition-colors',
                   isActive ? 'text-primary' : 'text-text-secondary'
                 )}
               >
                 <div className="relative">
-                  <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                   {item.href === '/cart' && mounted && cartCount > 0 && (
-                    <span className="absolute -right-2 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white">
+                    <span className="absolute -right-1.5 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white">
                       {cartCount > 9 ? '9+' : cartCount}
                     </span>
                   )}
                 </div>
-                <span className="mt-0.5 text-[10px] font-medium">{item.label}</span>
+                <span className="mt-0.5 text-[9px] font-medium truncate w-full text-center leading-none">{item.label}</span>
                 {isActive && (
-                  <span className="absolute -top-px left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-primary" />
+                  <span className="absolute -top-px left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-primary" />
                 )}
               </Link>
             );
@@ -67,8 +67,8 @@ export function MobileBottomBar() {
             rel="noopener noreferrer"
             className="flex flex-1 flex-col items-center justify-center py-2 text-text-secondary transition-colors hover:text-primary"
           >
-            <FaWhatsapp size={22} />
-            <span className="mt-0.5 text-[10px] font-medium">WhatsApp</span>
+            <FaWhatsapp size={20} />
+            <span className="mt-0.5 text-[9px] font-medium">WhatsApp</span>
           </a>
         </div>
       </div>

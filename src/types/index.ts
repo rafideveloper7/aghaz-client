@@ -21,6 +21,20 @@ export interface Product {
   updatedAt: string;
 }
 
+export interface Review {
+  _id: string;
+  product: string | Product['_id'];
+  name: string;
+  rating: number;
+  comment: string;
+  image?: string;
+  verified: boolean;
+  approved: boolean;
+  helpful: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiResponse {
   success: boolean;
   message: string;
@@ -118,6 +132,8 @@ export interface SiteSettings {
   formSubmitEmail: string;
   orderSuccessMessage: string;
   paymentMethods: PaymentMethod[];
+  reviewsEnabled: boolean;
+  reviewsRequireApproval: boolean;
 }
 
 export interface ContactMessagePayload {

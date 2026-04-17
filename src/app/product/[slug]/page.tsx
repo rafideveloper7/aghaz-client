@@ -225,7 +225,7 @@ export default function ProductPage() {
       <div className="mx-auto max-w-7xl px-4 space-y-6">
         <ProductBenefits benefits={product.benefits} />
         <ProductFAQ faqs={product.faqs} />
-        <ProductReviews />
+        <ProductReviews productId={product._id} productTitle={product.title} />
       </div>
 
       {/* Related Products */}
@@ -235,14 +235,14 @@ export default function ProductPage() {
       />
 
       {/* Sticky Mobile Order Button */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-gray-100 bg-white/95 p-3 backdrop-blur-md md:hidden">
-        <div className="flex items-center justify-between gap-3">
+      <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-gray-100 bg-white/95 p-2 backdrop-blur-md md:hidden">
+        <div className="flex items-center justify-between gap-2">
           <div>
-            <span className="text-lg font-black text-text-primary">
+            <span className="text-base font-black text-text-primary">
               {formatPrice(product.price)}
             </span>
             {product.comparePrice && product.comparePrice > product.price && (
-              <span className="ml-2 text-sm text-text-secondary line-through">
+              <span className="ml-1 text-xs text-text-secondary line-through">
                 {formatPrice(product.comparePrice)}
               </span>
             )}
@@ -252,11 +252,12 @@ export default function ProductPage() {
             size="md"
             onClick={handleAddToCart}
             disabled={!product.inStock}
-            className="min-w-[140px]"
+            className="min-w-[120px] text-sm py-2"
             asMotion
           >
-            <FiShoppingCart size={16} />
-            Order Now
+            <FiShoppingCart size={14} />
+            <span className="sm:hidden">Order</span>
+            <span className="hidden sm:inline">Order Now</span>
           </Button>
         </div>
       </div>

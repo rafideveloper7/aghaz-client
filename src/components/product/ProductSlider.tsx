@@ -94,30 +94,30 @@ export function ProductSlider({ images, title }: ProductSliderProps) {
           )}
         </div>
 
-        {/* Thumbnails */}
-        {images.length > 1 && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-            {images.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => goToIndex(index)}
-                className={cn(
-                  'relative h-16 w-16 shrink-0 overflow-hidden rounded-lg transition-all md:h-20 md:w-20',
-                  currentIndex === index
-                    ? 'ring-2 ring-primary'
-                    : 'ring-1 ring-gray-200 opacity-60 hover:opacity-100'
-                )}
-              >
-                <SafeImage
-                  src={image}
-                  alt={`${title} - Thumbnail ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        )}
+         {/* Thumbnails */}
+         {images.length > 1 && (
+           <div className="mt-2 flex gap-1.5 overflow-x-auto pb-2">
+             {images.map((image, index) => (
+               <button
+                 key={index}
+                 onClick={() => goToIndex(index)}
+                 className={cn(
+                   'relative h-14 w-14 shrink-0 overflow-hidden rounded-lg transition-all md:h-16 md:w-16',
+                   currentIndex === index
+                     ? 'ring-2 ring-primary'
+                     : 'ring-1 ring-gray-200 opacity-60 hover:opacity-100'
+                 )}
+               >
+                 <SafeImage
+                   src={image}
+                   alt={`${title} - Thumbnail ${index + 1}`}
+                   fill
+                   className="object-cover"
+                 />
+               </button>
+             ))}
+           </div>
+         )}
       </div>
 
       {/* Fullscreen Modal */}

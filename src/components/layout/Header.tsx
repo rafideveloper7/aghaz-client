@@ -80,9 +80,9 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <LogoContent />
-              <span className="text-xl font-black tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              {/* <span className="hidden sm:inline text-xl font-black tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                 {SITE_NAME}
-              </span>
+              </span> */}
             </Link>
 
             {/* Desktop Nav */}
