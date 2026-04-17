@@ -11,14 +11,10 @@ import type { HeroSlide } from '@/types';
 
 const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
   try {
-    const response = await fetch(`${API_URL}/api/hero-slides`);
-    if (!response.ok) {
-      return [];
-    }
-    const json = await response.json();
-    const slides = json.data;
-    return Array.isArray(slides) ? slides : [];
-  } catch (error) {
+    const res = await fetch(`${API_URL}/api/hero-slides`);
+    const data = await res.json();
+    return Array.isArray(data.data) ? data.data : [];
+  } catch {
     return [];
   }
 };
@@ -27,8 +23,7 @@ export function HeroSection() {
   const { data: slides = [], isLoading } = useQuery({
     queryKey: ['hero-slides'],
     queryFn: fetchHeroSlides,
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
+    staleTime: 60 * 1000,
   });
 
   const [current, setCurrent] = useState(0);
@@ -105,12 +100,6 @@ export function HeroSection() {
 
   const slide = slides[current];
 
-  // Determine which image to use based on screen size
-  const getImageSrc = () => {
-    // Will be handled by CSS classes, but we need a fallback
-    return slide.image;
-  };
-
   return (
     <section
       className="relative overflow-hidden pb-8 md:pb-10"
@@ -127,10 +116,9 @@ export function HeroSection() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="absolute inset-0"
         >
           {/* Background Images */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black min-h-[560px] md:min-h-[720px]">
             {slide.image ? (
               <Image
                 src={slide.image}
