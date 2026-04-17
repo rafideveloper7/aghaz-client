@@ -120,15 +120,16 @@ export function HeroSection() {
           {/* Background Images */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black min-h-[560px] md:min-h-[720px]">
             {slide.image ? (
-              <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                priority
-                className="object-cover"
-                sizes="100vw"
-                unoptimized
-              />
+                <Image
+                  src={slide.image!}
+                  alt={slide.title}
+                  fill
+                  priority
+                  className="object-cover hidden md:block"
+                  sizes="100vw"
+                  unoptimized
+                  onError={() => handleImageError(slide.image!)}
+                />
             ) : null}
           </div>
 
