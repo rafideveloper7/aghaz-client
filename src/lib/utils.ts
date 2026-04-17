@@ -9,6 +9,10 @@ export function formatPrice(price: number): string {
   return `Rs. ${price.toLocaleString('en-PK')}`;
 }
 
+export function calculateDeliveryFee(subtotal: number): number {
+  return subtotal >= 2000 ? 0 : 150;
+}
+
 export function calculateDiscount(price: number, comparePrice?: number): number | null {
   if (!comparePrice || comparePrice <= price) return null;
   return Math.round(((comparePrice - price) / comparePrice) * 100);
@@ -25,7 +29,7 @@ export function slugify(text: string): string {
 
 export function getWhatsAppUrl(message?: string, number?: string): string {
   const whatsappNumber = number || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923001234567';
-  const defaultMsg = 'Hi! I need help with an order from Aghaz.com';
+  const defaultMsg = 'Hi! I need help with an order from Aghaz.store';
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message || defaultMsg)}`;
 }
 

@@ -41,38 +41,34 @@ function ShopContent() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 rounded-[2rem] border border-white/70 bg-white/85 p-5 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.35)] backdrop-blur md:p-6">
         <h1 className="text-2xl font-black text-text-primary md:text-3xl">
           {search ? `Search: "${search}"` : category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'All Products'}
         </h1>
         <p className="mt-1 text-sm text-text-secondary">
           {allProducts.length} products found
         </p>
-      </div>
-
-      {/* Search */}
-      <div className="mb-4">
-        <SearchBar initialValue={search} />
-      </div>
-
-      {/* Filters Row */}
-      <div className="mb-4 flex items-center gap-3">
-        <CategoryFilter />
-        <div className="relative shrink-0">
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortOption)}
-            className="h-10 appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            aria-label="Sort products"
-          >
-            <option value="latest">Latest</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-          </select>
-          <FiSliders
-            size={14}
-            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary"
-          />
+        <div className="mt-4 space-y-3">
+          <SearchBar initialValue={search} />
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <CategoryFilter className="min-w-0 flex-1" />
+            <div className="relative w-full shrink-0 md:w-auto">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortOption)}
+                className="h-11 w-full appearance-none rounded-2xl border border-white/70 bg-white px-4 pr-10 text-sm font-medium text-text-primary shadow-sm focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 md:w-[220px]"
+                aria-label="Sort products"
+              >
+                <option value="latest">Latest</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+              <FiSliders
+                size={14}
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

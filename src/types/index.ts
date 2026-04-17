@@ -49,6 +49,20 @@ export interface CartItem {
   image: string;
 }
 
+export type PaymentMethodType = 'cod' | 'wallet' | 'bank' | 'other';
+
+export interface PaymentMethod {
+  code: string;
+  label: string;
+  type: PaymentMethodType;
+  accountTitle?: string;
+  accountNumber?: string;
+  iban?: string;
+  instructions?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface ProductsResponse {
   products: Product[];
   total: number;
@@ -64,6 +78,8 @@ export interface OrderPayload {
   address: string;
   products: CartItem[];
   totalAmount: number;
+  paymentMethodCode: string;
+  paymentReference?: string;
 }
 
 export interface OrderResponse {
@@ -74,6 +90,18 @@ export interface OrderResponse {
   address: string;
   products: CartItem[];
   totalAmount: number;
+  paymentMethod: {
+    code: string;
+    label: string;
+    type: PaymentMethodType;
+  };
+  paymentDetails?: {
+    accountTitle?: string;
+    accountNumber?: string;
+    iban?: string;
+    paymentReference?: string;
+  };
+  paymentStatus: 'unpaid' | 'awaiting_verification' | 'paid';
   status: string;
   createdAt: string;
 }
@@ -89,6 +117,7 @@ export interface SiteSettings {
   workingHours: string;
   formSubmitEmail: string;
   orderSuccessMessage: string;
+  paymentMethods: PaymentMethod[];
 }
 
 export interface ContactMessagePayload {

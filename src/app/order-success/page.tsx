@@ -12,6 +12,7 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export default function OrderSuccessPage() {
   const [orderNumber, setOrderNumber] = useState('');
+  const [latestOrder, setLatestOrder] = useState<OrderResponse | null>(null);
   const { data: settings } = useSiteSettings();
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function OrderSuccessPage() {
       const parsedOrder = JSON.parse(storedOrder) as OrderResponse;
       if (parsedOrder._id) {
         setOrderNumber(parsedOrder._id);
+        setLatestOrder(parsedOrder);
       }
     } catch {
       // Ignore invalid cached order data
@@ -87,6 +89,25 @@ export default function OrderSuccessPage() {
           {settings?.orderSuccessMessage || 'Thank you for your order! We will contact you shortly to confirm your order details.'}
         </motion.p>
 
+        {latestOrder?.paymentMethod?.label && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+            className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-left"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Payment</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">{latestOrder.paymentMethod.label}</p>
+            <p className="mt-1 text-xs text-slate-600">
+              {latestOrder.paymentMethod.type === 'cod'
+                ? 'Payment will be collected on delivery.'
+                : latestOrder.paymentDetails?.paymentReference
+                  ? `Reference received: ${latestOrder.paymentDetails.paymentReference}. Our team will verify it shortly.`
+                  : 'Your payment will be reviewed by our team shortly.'}
+            </p>
+          </motion.div>
+        )}
+
         {/* Order Number */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -136,7 +157,7 @@ export default function OrderSuccessPage() {
               <div>
                 <p className="text-sm font-medium text-text-primary">Delivery</p>
                 <p className="text-xs text-text-secondary">
-                  Expect delivery within 2-5 business days. Pay cash upon delivery.
+                  Expect delivery within 2-5 business days.
                 </p>
               </div>
             </div>

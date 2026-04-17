@@ -1,7 +1,7 @@
 'use client';
 
 import { useCartStore } from '@/store/cartStore';
-import { formatPrice } from '@/lib/utils';
+import { calculateDeliveryFee, formatPrice } from '@/lib/utils';
 import { CartItemCompact } from '@/components/cart/CartItem';
 import { FiPackage } from 'react-icons/fi';
 
@@ -16,7 +16,7 @@ export function OrderSummary({ variant = 'sidebar' }: OrderSummaryProps) {
 
   const subtotal = getTotal();
   const itemCount = getItemCount();
-  const deliveryFee = subtotal >= 2000 ? 0 : 150;
+  const deliveryFee = calculateDeliveryFee(subtotal);
   const total = subtotal + deliveryFee;
 
   if (items.length === 0) {

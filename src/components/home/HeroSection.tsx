@@ -45,7 +45,7 @@ export function HeroSection() {
   // Show loading skeleton
   if (isLoading) {
     return (
-      <section className="relative h-[85vh] min-h-[500px] bg-gray-100 flex items-center justify-center">
+      <section className="relative flex min-h-[560px] items-center justify-center bg-gray-100 md:min-h-[720px]">
         <div className="animate-pulse space-y-4 text-center">
           <div className="h-8 bg-gray-200 rounded w-64 mx-auto" />
           <div className="h-4 bg-gray-200 rounded w-48 mx-auto" />
@@ -69,10 +69,12 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative h-[85vh] min-h-[500px] max-h-[900px] overflow-hidden"
+      className="relative overflow-hidden pb-8 md:pb-10"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <div className="absolute inset-x-4 top-6 z-10 hidden h-px bg-white/20 md:block" />
+
       {/* Slides */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -84,7 +86,7 @@ export function HeroSection() {
           className="absolute inset-0"
         >
           {/* Background Images */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-gray-900 to-gray-950">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black">
             {/* Mobile background - only shown on small screens */}
             {slide.mobileBg ? (
               <Image
@@ -135,123 +137,136 @@ export function HeroSection() {
           </div>
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.25),transparent_18%),linear-gradient(90deg,rgba(2,6,23,0.92)_0%,rgba(2,6,23,0.68)_38%,rgba(2,6,23,0.18)_100%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute left-[-8%] top-[14%] h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl md:h-72 md:w-72" />
+          <div className="absolute right-[8%] top-[18%] h-28 w-28 rounded-full bg-amber-300/20 blur-3xl md:h-44 md:w-44" />
 
           {/* Content */}
-          <div className="relative h-full flex items-center">
-            <div className="mx-auto max-w-7xl px-4 w-full">
+          <div className="relative flex min-h-[560px] items-center md:min-h-[720px]">
+            <div className="mx-auto w-full max-w-7xl px-4">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="max-w-2xl"
+                className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_320px]"
               >
-                {/* Badge */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-2 mb-6"
-                >
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm font-medium text-white/90">New Arrivals Available</span>
-                </motion.div>
-
-                {/* Mobile Content - shown only on small screens */}
-                <div className="md:hidden">
-                  {/* Title */}
-                  <h1 className="text-4xl font-black text-white leading-tight sm:text-5xl">
-                    {slide.mobileTitle || slide.title}
-                  </h1>
-
-                  {/* Subtitle */}
-                  {(slide.mobileSubtitle || slide.subtitle) && (
-                    <p className="mt-4 text-lg text-white/80 sm:text-xl max-w-lg">
-                      {slide.mobileSubtitle || slide.subtitle}
-                    </p>
-                  )}
-
-                  {/* CTA Buttons */}
+                <div className="max-w-3xl">
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
-                    className="mt-8 flex flex-wrap gap-4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 backdrop-blur"
                   >
-                    <Link
-                      href={slide.mobileCtaLink || slide.ctaLink || '/shop'}
-                      className="group inline-flex items-center gap-2 rounded-full bg-emerald-500 px-8 py-4 text-base font-bold text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/85">Fresh Drops • Fast Delivery</span>
+                  </motion.div>
+
+                  <div className="md:hidden">
+                    <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl">
+                      {slide.mobileTitle || slide.title}
+                    </h1>
+                    {(slide.mobileSubtitle || slide.subtitle) && (
+                      <p className="mt-4 max-w-lg text-base leading-7 text-white/78 sm:text-lg">
+                        {slide.mobileSubtitle || slide.subtitle}
+                      </p>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      className="mt-8 flex flex-wrap gap-3"
                     >
-                      {slide.mobileCtaText || slide.ctaText || 'Shop Now'}
-                      <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                      href="/shop"
-                      className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 bg-white/5 backdrop-blur-sm px-8 py-4 text-base font-bold text-white transition-all hover:bg-white/10 hover:border-white/50"
+                      <Link
+                        href={slide.mobileCtaLink || slide.ctaLink || '/shop'}
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+                      >
+                        {slide.mobileCtaText || slide.ctaText || 'Shop Now'}
+                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                      <Link
+                        href="/checkout"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
+                      >
+                        Try Faster Checkout
+                      </Link>
+                    </motion.div>
+                  </div>
+
+                  <div className="hidden md:block">
+                    <h1 className="font-display text-5xl font-black leading-[0.95] text-white lg:text-7xl">
+                      {slide.desktopTitle || slide.title}
+                    </h1>
+                    {(slide.desktopSubtitle || slide.subtitle) && (
+                      <p className="mt-5 max-w-2xl text-lg leading-8 text-white/78 lg:text-2xl">
+                        {slide.desktopSubtitle || slide.subtitle}
+                      </p>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      className="mt-9 flex flex-wrap gap-4"
                     >
-                      Browse All
-                    </Link>
+                      <Link
+                        href={slide.desktopCtaLink || slide.ctaLink || '/shop'}
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+                      >
+                        {slide.desktopCtaText || slide.ctaText || 'Shop Now'}
+                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                      <Link
+                        href="/checkout"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
+                      >
+                        Explore Checkout
+                      </Link>
+                    </motion.div>
+                  </div>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.9 }}
+                    className="mt-10 grid max-w-2xl grid-cols-3 gap-3"
+                  >
+                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
+                      <p className="text-2xl font-black text-white">500+</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Curated Products</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
+                      <p className="text-2xl font-black text-white">10K+</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Happy Customers</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
+                      <p className="text-2xl font-black text-white">COD</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Plus Pay Now</p>
+                    </div>
                   </motion.div>
                 </div>
 
-                {/* Desktop Content - shown only on medium+ screens */}
-                <div className="hidden md:block">
-                  {/* Title */}
-                  <h1 className="text-4xl font-black text-white leading-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                    {slide.desktopTitle || slide.title}
-                  </h1>
-
-                  {/* Subtitle */}
-                  {(slide.desktopSubtitle || slide.subtitle) && (
-                    <p className="mt-4 text-lg text-white/80 sm:text-xl md:text-2xl max-w-lg">
-                      {slide.desktopSubtitle || slide.subtitle}
-                    </p>
-                  )}
-
-                  {/* CTA Buttons */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
-                    className="mt-8 flex flex-wrap gap-4"
-                  >
-                    <Link
-                      href={slide.desktopCtaLink || slide.ctaLink || '/shop'}
-                      className="group inline-flex items-center gap-2 rounded-full bg-emerald-500 px-8 py-4 text-base font-bold text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5"
-                    >
-                      {slide.desktopCtaText || slide.ctaText || 'Shop Now'}
-                      <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                      href="/shop"
-                      className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 bg-white/5 backdrop-blur-sm px-8 py-4 text-base font-bold text-white transition-all hover:bg-white/10 hover:border-white/50"
-                    >
-                      Browse All
-                    </Link>
-                  </motion.div>
-                </div>
-
-                {/* Stats */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.9 }}
-                  className="mt-10 flex items-center gap-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.8 }}
+                  className="hidden rounded-[2rem] border border-white/10 bg-white/10 p-5 text-white shadow-2xl backdrop-blur lg:block"
                 >
-                  <div>
-                    <p className="text-2xl font-bold text-white">500+</p>
-                    <p className="text-sm text-white/60">Products</p>
-                  </div>
-                  <div className="h-10 w-px bg-white/20" />
-                  <div>
-                    <p className="text-2xl font-bold text-white">10K+</p>
-                    <p className="text-sm text-white/60">Happy Customers</p>
-                  </div>
-                  <div className="h-10 w-px bg-white/20" />
-                  <div>
-                    <p className="text-2xl font-bold text-white">COD</p>
-                    <p className="text-sm text-white/60">Cash on Delivery</p>
+                  <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200/85">Why Customers Convert</p>
+                    <div className="mt-5 space-y-4">
+                      <div className="rounded-2xl bg-white/10 p-4">
+                        <p className="text-sm font-semibold">Cleaner value hierarchy</p>
+                        <p className="mt-1 text-sm text-white/65">Headline, CTA, and offer stay readable even over rich imagery.</p>
+                      </div>
+                      <div className="rounded-2xl bg-white/10 p-4">
+                        <p className="text-sm font-semibold">Confidence-led checkout</p>
+                        <p className="mt-1 text-sm text-white/65">COD plus admin-managed payment accounts reduce hesitation.</p>
+                      </div>
+                      <div className="rounded-2xl bg-white/10 p-4">
+                        <p className="text-sm font-semibold">Mobile-first flow</p>
+                        <p className="mt-1 text-sm text-white/65">Faster browsing, clearer categories, and stronger touch targets.</p>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -303,7 +318,7 @@ export function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-6 right-6 md:right-8"
+        className="absolute bottom-6 right-6 hidden md:block md:right-8"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}

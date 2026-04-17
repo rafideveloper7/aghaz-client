@@ -4,7 +4,7 @@
 
 :root {
   --foreground: #111827;
-  --background: #fafafa;
+  --background: #f5f7f2;
   --primary: #10b981;
   --primary-dark: #059669;
 }
@@ -20,7 +20,10 @@ html {
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 26%),
+    radial-gradient(circle at top right, rgba(250, 204, 21, 0.14), transparent 18%),
+    linear-gradient(180deg, #f8faf7 0%, #f4f6f1 45%, #eef2ea 100%);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,6 +37,20 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.mobile-category-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.75) transparent;
+}
+
+.mobile-category-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mobile-category-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
 }
 
 /* Custom scrollbar for vertical scroll */

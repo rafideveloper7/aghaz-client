@@ -29,21 +29,26 @@ export function CategoryFilter({ className }: CategoryFilterProps) {
     return (
       <div className={cn('flex gap-2 overflow-x-auto pb-2', className)}>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="shrink-0 rounded-full px-4 py-2 bg-gray-200 animate-pulse w-20 h-9" />
+          <div key={i} className="h-10 w-24 shrink-0 rounded-2xl bg-gray-200 animate-pulse" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className={cn('flex gap-2 overflow-x-auto pb-2 scrollbar-hide', className)}>
+    <div
+      className={cn(
+        'mobile-category-scroll flex gap-2 overflow-x-auto pb-2 pr-1 scrollbar-hide snap-x snap-mandatory',
+        className
+      )}
+    >
       <button
         onClick={() => handleCategoryClick('')}
         className={cn(
-          'shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap',
+          'snap-start shrink-0 rounded-2xl border px-4 py-2.5 text-sm font-semibold transition-all duration-200 whitespace-nowrap shadow-sm',
           !activeCategory
-            ? 'bg-gray-900 text-white'
-            : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
+            ? 'border-gray-900 bg-gray-900 text-white'
+            : 'border-white/70 bg-white text-text-secondary hover:border-primary/20 hover:bg-primary-50 hover:text-text-primary'
         )}
       >
         All
@@ -53,10 +58,10 @@ export function CategoryFilter({ className }: CategoryFilterProps) {
           key={category._id}
           onClick={() => handleCategoryClick(category.slug)}
           className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap',
+            'snap-start shrink-0 rounded-2xl border px-4 py-2.5 text-sm font-semibold transition-all duration-200 whitespace-nowrap shadow-sm',
             activeCategory === category.slug
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
+              ? 'border-gray-900 bg-gray-900 text-white'
+              : 'border-white/70 bg-white text-text-secondary hover:border-primary/20 hover:bg-primary-50 hover:text-text-primary'
           )}
         >
           {category.name}
