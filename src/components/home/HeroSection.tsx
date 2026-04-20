@@ -163,7 +163,7 @@ export function HeroSection() {
             className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black"
             style={{ minHeight: `${mobileHeight}px` }}
           >
-            {/* Desktop image - show on >= 468px */}
+            {/* Desktop image - show on >= 640px */}
             {isValidMedia(mediaUrl) && (
               <HeroMedia
                 src={mediaUrl}
@@ -174,7 +174,7 @@ export function HeroSection() {
                 style={{ display: 'none' }}
               />
             )}
-            {/* Mobile image - show on < 468px */}
+            {/* Mobile image - show on < 640px (all mobile devices) */}
             {isValidMedia(slide.mobileBg || mediaUrl) && (
               <HeroMedia
                 src={slide.mobileBg || mediaUrl}

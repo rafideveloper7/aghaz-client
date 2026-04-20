@@ -134,8 +134,8 @@ input:-webkit-autofill:focus {
   -webkit-line-clamp: 3;
 }
 
-/* Hero media breakpoint for mobile images - < 468px */
-@media (max-width: 467px) {
+/* Hero media breakpoint for mobile images - all mobile and small tablets */
+@media (max-width: 639px) {
   .hero-desktop-media {
     display: none !important;
   }
@@ -144,7 +144,7 @@ input:-webkit-autofill:focus {
   }
 }
 
-@media (min-width: 468px) {
+@media (min-width: 640px) {
   .hero-desktop-media {
     display: block !important;
   }
