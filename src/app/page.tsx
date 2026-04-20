@@ -125,9 +125,7 @@ export default function HomePage() {
             </a>
           </div>
         </div>
-      </section>ur
-
-
+      </section>
       <TrustBadges />
     </div>
     
