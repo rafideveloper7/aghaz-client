@@ -116,7 +116,7 @@ export default function HomePage() {
               Limited Window
             </span>
             <h2 className="mt-3 font-display text-2xl font-black text-text-primary">
-              Flash urur
+              Flash Deals
             </h2>
             <p className="mt-2 text-sm leading-5 text-text-secondary">
               Urgent offers and short-run discounts designed to create momentum on the homepage.
