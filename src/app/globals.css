@@ -133,3 +133,22 @@ input:-webkit-autofill:focus {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+/* Hero media breakpoint for mobile images - < 468px */
+@media (max-width: 467px) {
+  .hero-desktop-media {
+    display: none !important;
+  }
+  .hero-mobile-media {
+    display: block !important;
+  }
+}
+
+@media (min-width: 468px) {
+  .hero-desktop-media {
+    display: block !important;
+  }
+  .hero-mobile-media {
+    display: none !important;
+  }
+}

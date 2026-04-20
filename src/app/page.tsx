@@ -15,10 +15,6 @@ export default function HomePage() {
         limit={10}
       />
       
-      
-      
-    
-
       <ProductScroll
         title="Flash Deals"
         subtitle="Quick steals before they disappear"

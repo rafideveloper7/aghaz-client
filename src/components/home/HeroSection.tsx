@@ -163,15 +163,28 @@ export function HeroSection() {
             className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black"
             style={{ minHeight: `${mobileHeight}px` }}
           >
-            {isValidMedia(mediaUrl) ? (
+            {/* Desktop image - show on >= 468px */}
+            {isValidMedia(mediaUrl) && (
               <HeroMedia
                 src={mediaUrl}
                 type={mediaType}
                 alt={slide.title}
                 fill
-                className="hidden md:block"
+                className="hero-desktop-media hidden"
+                style={{ display: 'none' }}
               />
-            ) : null}
+            )}
+            {/* Mobile image - show on < 468px */}
+            {isValidMedia(slide.mobileBg || mediaUrl) && (
+              <HeroMedia
+                src={slide.mobileBg || mediaUrl}
+                type={mediaType}
+                alt={slide.title}
+                fill
+                className="hero-mobile-media"
+                style={{ display: 'none' }}
+              />
+            )}
           </div>
 
           {/* Gradient Overlay */}
