@@ -25,13 +25,15 @@ const HeroMedia = ({
   type, 
   alt, 
   fill = false,
-  className = '' 
+  className = '',
+  style 
 }: { 
   src: string; 
   type: 'image' | 'video' | 'gif'; 
   alt?: string;
   fill?: boolean;
   className?: string;
+  style?: React.CSSProperties;
 }) => {
   if (type === 'video') {
     return (
@@ -42,7 +44,7 @@ const HeroMedia = ({
         loop
         playsInline
         className={className}
-        style={fill ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } : {}}
+        style={fill ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', ...style } : style}
       />
     );
   }
@@ -56,6 +58,7 @@ const HeroMedia = ({
       sizes="100vw"
       unoptimized
       priority
+      style={style}
     />
   );
 };
@@ -170,8 +173,7 @@ export function HeroSection() {
                 type={mediaType}
                 alt={slide.title}
                 fill
-                className="hero-desktop-media hidden"
-                style={{ display: 'none' }}
+                className="hero-desktop-media"
               />
             )}
             {/* Mobile image - show on < 640px (all mobile devices) */}
@@ -182,7 +184,6 @@ export function HeroSection() {
                 alt={slide.title}
                 fill
                 className="hero-mobile-media"
-                style={{ display: 'none' }}
               />
             )}
           </div>
