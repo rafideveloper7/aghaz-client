@@ -164,6 +164,18 @@ export interface HeroSlide {
   desktopBg?: string;
   ctaText: string;
   ctaLink: string;
+  mediaType: 'image' | 'video' | 'gif';
+  mediaUrl: string;
+  rightSideMediaType: 'image' | 'video' | 'gif' | 'card' | 'none';
+  rightSideMediaUrl: string;
+  rightSideCardTitle: string;
+  rightSideCardSubtitle: string;
+  titleColor: string;
+  subtitleColor: string;
+  titleFontSize: number;
+  subtitleFontSize: number;
+  heroHeight: number;
+  mobileHeroHeight: number;
   mobileTitle?: string;
   mobileSubtitle?: string;
   mobileCtaText?: string;

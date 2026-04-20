@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiArrowRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import { API_URL } from '@/lib/constants';
 import type { HeroSlide } from '@/types';
@@ -19,6 +19,47 @@ const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
   }
 };
 
+// Media renderer component that handles images, videos, gifs
+const HeroMedia = ({ 
+  src, 
+  type, 
+  alt, 
+  fill = false,
+  className = '' 
+}: { 
+  src: string; 
+  type: 'image' | 'video' | 'gif'; 
+  alt?: string;
+  fill?: boolean;
+  className?: string;
+}) => {
+  if (type === 'video') {
+    return (
+      <video
+        src={src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className={className}
+        style={fill ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } : {}}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt || ''}
+      fill={fill}
+      className={`${className} ${fill ? 'object-cover' : ''}`}
+      sizes="100vw"
+      unoptimized
+      priority
+    />
+  );
+};
+
 export function HeroSection() {
   const { data: slides = [], isLoading } = useQuery({
     queryKey: ['hero-slides'],
@@ -28,15 +69,15 @@ export function HeroSection() {
 
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [mediaErrors, setMediaErrors] = useState<Record<string, boolean>>({});
 
-  const handleImageError = useCallback((imageUrl: string) => {
-    setImageErrors(prev => ({ ...prev, [imageUrl]: true }));
+  const handleMediaError = useCallback((mediaUrl: string) => {
+    setMediaErrors(prev => ({ ...prev, [mediaUrl]: true }));
   }, []);
 
-  const isValidImage = useCallback((url: string) => {
-    return url && url.trim() && !imageErrors[url];
-  }, [imageErrors]);
+  const isValidMedia = useCallback((url: string) => {
+    return url && url.trim() && !mediaErrors[url];
+  }, [mediaErrors]);
 
   const nextSlide = useCallback(() => {
     setCurrent(prev => (prev + 1) % (slides.length || 1));
@@ -58,7 +99,7 @@ export function HeroSection() {
   // Show loading skeleton
   if (isLoading) {
     return (
-      <section className="relative flex min-h-[400px] items-center justify-center bg-gray-100 md:min-h-[500px]">
+      <section className="relative flex min-h-[300px] items-center justify-center bg-gray-100 md:min-h-[350px]">
         <div className="animate-pulse space-y-4 text-center">
           <div className="h-8 bg-gray-200 rounded w-64 mx-auto" />
           <div className="h-4 bg-gray-200 rounded w-48 mx-auto" />
@@ -70,27 +111,21 @@ export function HeroSection() {
   // Always show fallback banner (hero not configured or API failed)
   if (!slides.length) {
     return (
-      <section className="relative flex min-h-[400px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[500px]">
-        <div className="mx-auto max-w-7xl px-4 py-12 text-center">
-          <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+      <section className="relative flex min-h-[300px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[350px]">
+        <div className="mx-auto max-w-7xl px-4 py-8 text-center">
+          <h1 className="font-display text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
             Discover Smart Living
           </h1>
-          <p className="mt-4 max-w-xl text-lg leading-7 text-white/78 mx-auto">
+          <p className="mt-3 max-w-xl text-base leading-6 text-white/78 mx-auto">
             Curated products that make your life easier, smarter, and more enjoyable.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
             >
               Shop Now
-              <FiArrowRight className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/checkout"
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
-            >
-              Try Faster Checkout
+              <FiArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -99,281 +134,138 @@ export function HeroSection() {
   }
 
   const slide = slides[current];
+  
+  // Get media URL (fallback to legacy image field)
+  const mediaUrl = slide.mediaUrl || slide.image;
+  const mediaType = slide.mediaType || 'image';
+  
+  // Calculate heights with defaults
+  const mobileHeight = slide.mobileHeroHeight || 400;
+  const desktopHeight = slide.heroHeight || 450;
 
   return (
     <section
-      className="relative overflow-hidden pb-8 md:pb-10"
+      className="relative overflow-hidden h-[90%]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="absolute inset-x-4 top-6 z-10 hidden h-px bg-white/20 md:block" />
-
       {/* Slides */}
       <AnimatePresence mode="wait">
         <motion.div
           key={slide._id}
-          initial={{ opacity: 0, scale: 1.05 }}
+          initial={{ opacity: 0, scale: 1.02 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          {/* Background Images */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black min-h-[560px] md:min-h-[720px]">
-            {slide.image ? (
-                <Image
-                  src={slide.image!}
-                  alt={slide.title}
-                  fill
-                  priority
-                  className="object-cover hidden md:block"
-                  sizes="100vw"
-                  unoptimized
-                  onError={() => handleImageError(slide.image!)}
-                />
+          {/* Background Media */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-slate-950 to-black"
+            style={{ minHeight: `${mobileHeight}px` }}
+          >
+            {isValidMedia(mediaUrl) ? (
+              <HeroMedia
+                src={mediaUrl}
+                type={mediaType}
+                alt={slide.title}
+                fill
+                className="hidden md:block"
+              />
             ) : null}
           </div>
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.25),transparent_18%),linear-gradient(90deg,rgba(2,6,23,0.92)_0%,rgba(2,6,23,0.68)_38%,rgba(2,6,23,0.18)_100%)]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute left-[-8%] top-[14%] h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl md:h-72 md:w-72" />
-          <div className="absolute right-[8%] top-[18%] h-28 w-28 rounded-full bg-amber-300/20 blur-3xl md:h-44 md:w-44" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.15),transparent_18%),linear-gradient(90deg,rgba(2,6,23,0.85)_0%,rgba(2,6,23,0.55)_38%,rgba(2,6,23,0.1)_100%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
           {/* Content */}
-<div className="relative flex min-h-[560px] items-center md:min-h-[720px]">
-            <div className="mx-auto w-full max-w-7xl px-4">
+          <div 
+            className="relative flex items-center"
+            style={{ minHeight: `${mobileHeight}px` }}
+          >
+            <div className="mx-auto w-full max-w-7xl px-4 py-6">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="grid items-center gap-8 lg:grid-cols-[1fr_400px]"
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="grid items-center gap-6 lg:grid-cols-[1fr_350px]"
               >
                 <div className="max-w-2xl">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 backdrop-blur"
-                  >
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/85">Fresh Drops • Fast Delivery</span>
-                  </motion.div>
-
                   <div className="md:hidden">
-                    <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl">
+                    <h1 
+                      className="font-display font-black leading-tight"
+                      style={{ 
+                        color: slide.titleColor || '#ffffff',
+                        fontSize: `${Math.max(28, slide.titleFontSize * 0.7)}px`
+                      }}
+                    >
                       {slide.mobileTitle || slide.title}
                     </h1>
                     {(slide.mobileSubtitle || slide.subtitle) && (
-                      <p className="mt-4 max-w-lg text-base leading-7 text-white/78 sm:text-lg">
+                      <p 
+                        className="mt-3 max-w-lg leading-6"
+                        style={{ 
+                          color: slide.subtitleColor || '#ffffffc4',
+                          fontSize: `${Math.max(14, slide.subtitleFontSize * 0.8)}px`
+                        }}
+                      >
                         {slide.mobileSubtitle || slide.subtitle}
                       </p>
                     )}
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="mt-8 flex flex-wrap gap-3"
+                      transition={{ duration: 0.5, delay: 0.4 }}
+                      className="mt-6 flex flex-wrap gap-3"
                     >
                       <Link
                         href={slide.mobileCtaLink || slide.ctaLink || '/shop'}
-                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
                       >
                         {slide.mobileCtaText || slide.ctaText || 'Shop Now'}
-                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        <FiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </motion.div>
                   </div>
 
                   <div className="hidden md:block">
-                    <h1 className="font-display text-5xl font-black leading-[0.95] text-white lg:text-6xl">
+                    <h1 
+                      className="font-display font-black leading-[0.95]"
+                      style={{ 
+                        color: slide.titleColor || '#ffffff',
+                        fontSize: `${slide.titleFontSize || 52}px`
+                      }}
+                    >
                       {slide.desktopTitle || slide.title}
                     </h1>
                     {(slide.desktopSubtitle || slide.subtitle) && (
-                      <p className="mt-5 max-w-2xl text-lg leading-8 text-white/78 lg:text-xl">
+                      <p 
+                        className="mt-4 max-w-2xl leading-7"
+                        style={{ 
+                          color: slide.subtitleColor || '#ffffffc4',
+                          fontSize: `${slide.subtitleFontSize || 16}px`
+                        }}
+                      >
                         {slide.desktopSubtitle || slide.subtitle}
                       </p>
                     )}
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="mt-9 flex flex-wrap gap-4"
+                      transition={{ duration: 0.5, delay: 0.4 }}
+                      className="mt-6 flex flex-wrap gap-3"
                     >
                       <Link
                         href={slide.desktopCtaLink || slide.ctaLink || '/shop'}
-                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-7 py-3 text-sm font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
                       >
                         {slide.desktopCtaText || slide.ctaText || 'Shop Now'}
-                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        <FiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </motion.div>
                   </div>
                 </div>
-                
-                {/* Right side hero image - Admin controlled */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 40, rotateY: 8 }}
-                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                  transition={{ duration: 1, delay: 0.5, type: "spring", stiffness: 100 }}
-                  className="hidden lg:block relative"
-                >
-                  <div className="relative">
-                    {/* Glow background */}
-                    <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-amber-500/30 rounded-3xl blur-3xl opacity-70 animate-pulse" />
-                    
-                    {/* Hero image container */}
-                    <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-[2rem] border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_40px_100px_-30px_rgba(0,0,0,0.5)]">
-                      {/* Admin uploaded image */}
-                      <div className="relative aspect-[4/5]">
-                        {slide.desktopBg ? (
-                          <Image
-                            src={slide.desktopBg}
-                            alt={slide.title}
-                            fill
-                            className="object-contain p-6 drop-shadow-2xl"
-                            unoptimized
-                          />
-                        ) : slide.image ? (
-                          <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            className="object-contain p-6 drop-shadow-2xl"
-                            unoptimized
-                          />
-                        ) : null}
-                      </div>
-                      
-                      {/* Badge overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-white/80 text-xs uppercase tracking-widest mb-1">Limited Offer</p>
-                            <p className="text-white font-bold text-xl">Up to 70% OFF</p>
-                          </div>
-                          <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl px-4 py-2">
-                            <span className="text-white font-bold">HOT 🔥</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Floating elements */}
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.9 }}
-                      className="absolute -left-6 top-1/4 glass-card px-5 py-4 rounded-2xl shadow-xl"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                          <span className="text-emerald-400 text-lg">✓</span>
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold">Fast Delivery</p>
-                          <p className="text-white/60 text-xs">2-5 Days</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                    
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8, y: -20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 1.1 }}
-                      className="absolute -right-6 top-1/3 glass-card px-5 py-4 rounded-2xl shadow-xl"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                          <span className="text-amber-400 text-lg">★</span>
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold">Top Rated</p>
-                          <p className="text-white/60 text-xs">4.9/5 Stars</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
-
-                  <div className="hidden md:block">
-                    <h1 className="font-display text-5xl font-black leading-[0.95] text-white lg:text-7xl">
-                      {slide.desktopTitle || slide.title}
-                    </h1>
-                    {(slide.desktopSubtitle || slide.subtitle) && (
-                      <p className="mt-5 max-w-2xl text-lg leading-8 text-white/78 lg:text-2xl">
-                        {slide.desktopSubtitle || slide.subtitle}
-                      </p>
-                    )}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="mt-9 flex flex-wrap gap-4"
-                    >
-                      <Link
-                        href={slide.desktopCtaLink || slide.ctaLink || '/shop'}
-                        className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
-                      >
-                        {slide.desktopCtaText || slide.ctaText || 'Shop Now'}
-                        <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                      <Link
-                        href="/checkout"
-                        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur transition-all hover:bg-white/15"
-                      >
-                        Explore Checkout
-                      </Link>
-                    </motion.div>
-                  </div>
-
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.9 }}
-                    className="mt-10 grid max-w-2xl grid-cols-3 gap-3"
-                  >
-                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                      <p className="text-2xl font-black text-white">500+</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Curated Products</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                      <p className="text-2xl font-black text-white">10K+</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Happy Customers</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                      <p className="text-2xl font-black text-white">COD</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/55">Plus Pay Now</p>
-                    </div>
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.8 }}
-                  className="hidden rounded-[2rem] border border-white/10 bg-white/10 p-5 text-white shadow-2xl backdrop-blur lg:block"
-                >
-                  <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200/85">Why Customers Convert</p>
-                    <div className="mt-5 space-y-4">
-                      <div className="rounded-2xl bg-white/10 p-4">
-                        <p className="text-sm font-semibold">Cleaner value hierarchy</p>
-                        <p className="mt-1 text-sm text-white/65">Headline, CTA, and offer stay readable even over rich imagery.</p>
-                      </div>
-                      <div className="rounded-2xl bg-white/10 p-4">
-                        <p className="text-sm font-semibold">Confidence-led checkout</p>
-                        <p className="mt-1 text-sm text-white/65">COD plus admin-managed payment accounts reduce hesitation.</p>
-                      </div>
-                      <div className="rounded-2xl bg-white/10 p-4">
-                        <p className="text-sm font-semibold">Mobile-first flow</p>
-                        <p className="mt-1 text-sm text-white/65">Faster browsing, clearer categories, and stronger touch targets.</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+               
               </motion.div>
             </div>
           </div>
@@ -385,61 +277,37 @@ export function HeroSection() {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm p-3 text-white transition-all hover:bg-white/20 md:left-8"
+            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm p-2 text-white transition-all hover:bg-white/20 md:left-6"
             aria-label="Previous slide"
           >
-            <FiChevronLeft className="h-6 w-6" />
+            <FiChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm p-3 text-white transition-all hover:bg-white/20 md:right-8"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm p-2 text-white transition-all hover:bg-white/20 md:right-6"
             aria-label="Next slide"
           >
-            <FiChevronRight className="h-6 w-6" />
+            <FiChevronRight className="h-5 w-5" />
           </button>
         </>
       )}
 
       {/* Dots Indicator */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`transition-all duration-300 ${
-                index === current
-                  ? 'w-8 h-2 bg-emerald-500 rounded-full'
+              className={`transition-all duration-300 ${index === current
+                  ? 'w-6 h-2 bg-emerald-500 rounded-full'
                   : 'w-2 h-2 bg-white/40 hover:bg-white/60 rounded-full'
-              }`}
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
       )}
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-6 right-6 hidden md:block md:right-8"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-2 text-white/60"
-        >
-          <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
-          <div className="h-8 w-5 rounded-full border-2 border-white/30 flex items-start justify-center p-1">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="h-1.5 w-1.5 rounded-full bg-white/60"
-            />
-          </div>
-        </motion.div>
-      </motion.div>
     </section>
   );
 }

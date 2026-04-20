@@ -7,53 +7,18 @@ export default function HomePage() {
   return (
     <div>
       <HeroSection />
-      <TrustBadges />
-      <section className="py-8 md:py-12">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 lg:grid-cols-[1.5fr_1fr]">
-          <div className="rounded-[2rem] border border-white/60 bg-[linear-gradient(135deg,#fff8e6,#ffffff_40%,#ecfdf5)] p-6 shadow-[0_30px_80px_-50px_rgba(15,23,42,0.45)] md:p-8">
-            <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-amber-800">
-              Hot Right Now
-            </span>
-            <h2 className="mt-4 font-display text-3xl font-black text-text-primary md:text-4xl">
-              Trending picks that move fast.
-            </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary md:text-base">
-              Best sellers, impulse buys, and proven winners curated for quick decisions.
-            </p>
-            <a
-              href="/shop?category=trending-products"
-              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gray-900 px-6 py-3 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-            >
-              Shop Trending Now
-            </a>
-          </div>
-
-          <div className="rounded-[2rem] border border-rose-200/70 bg-[linear-gradient(160deg,#fff1f2,#ffffff_45%,#fff7ed)] p-6 shadow-[0_30px_80px_-55px_rgba(244,63,94,0.4)] md:p-8">
-            <span className="inline-flex rounded-full bg-rose-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-rose-700">
-              Limited Window
-            </span>
-            <h2 className="mt-4 font-display text-3xl font-black text-text-primary">
-              Flash Deals
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-text-secondary">
-              Urgent offers and short-run discounts designed to create momentum on the homepage.
-            </p>
-            <a
-              href="/shop?category=flash-deals"
-              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-6 py-3 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-            >
-              See Flash Deals
-            </a>
-          </div>
-        </div>
-      </section>
-
+      
       <ProductScroll
-        title="Trending Now"
-        subtitle="Our most popular picks"
+        title="🔥 Hot Products"
+        subtitle="Trending right now"
         viewAllHref="/shop?category=trending-products"
         limit={10}
       />
+      
+      
+      
+      
+
       <ProductScroll
         title="Flash Deals"
         subtitle="Quick steals before they disappear"
@@ -126,6 +91,49 @@ export default function HomePage() {
         viewAllHref="/shop?category=smart-gadgets"
         limit={10}
       />
+      <section className="py-6 md:py-8">
+        <div className="mx-auto grid max-w-7xl gap-4 px-4 lg:grid-cols-[1.5fr_1fr]">
+          <div className="rounded-xl border border-white/60 bg-[linear-gradient(135deg,#fff8e6,#ffffff_40%,#ecfdf5)] p-4 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.45)] md:p-6">
+            <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-amber-800">
+              Hot Right Now
+            </span>
+            <h2 className="mt-3 font-display text-2xl font-black text-text-primary md:text-3xl">
+              Trending picks that move fast.
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-5 text-text-secondary md:text-base">
+              Best sellers, impulse buys, and proven winners curated for quick decisions.
+            </p>
+            <a
+              href="/shop?category=trending-products"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
+            >
+              Shop Trending Now
+            </a>
+          </div>
+
+          <div className="rounded-xl border border-rose-200/70 bg-[linear-gradient(160deg,#fff1f2,#ffffff_45%,#fff7ed)] p-4 shadow-[0_20px_60px_-45px_rgba(244,63,94,0.4)] md:p-6">
+            <span className="inline-flex rounded-full bg-rose-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-rose-700">
+              Limited Window
+            </span>
+            <h2 className="mt-3 font-display text-2xl font-black text-text-primary">
+              Flash Deals
+            </h2>
+            <p className="mt-2 text-sm leading-5 text-text-secondary">
+              Urgent offers and short-run discounts designed to create momentum on the homepage.
+            </p>
+            <a
+              href="/shop?category=flash-deals"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
+            >
+              See Flash Deals
+            </a>
+          </div>
+        </div>
+      </section>
+
+
+      <TrustBadges />
     </div>
+    
   );
 }

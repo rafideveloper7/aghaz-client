@@ -31,7 +31,7 @@ export function TrustBadges() {
               <h3 className="text-xs font-bold text-text-primary md:text-sm">{badge.title}</h3>
               <p className="mt-0.5 text-[10px] text-text-secondary md:text-xs">{badge.description}</p>
             </motion.div>
-          ))}
+          ))} 
         </div>
       </div>
     </section>
