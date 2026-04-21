@@ -145,7 +145,7 @@ export default function ProductPage() {
 
             {/* Stock Status */}
             <div className="mt-3">
-              {product.stock > 0 ? (
+              {(product.stock ?? 0) > 0 ? (
                 <Badge variant="success" size="sm">
                   In Stock ({product.stock} available)
                 </Badge>
