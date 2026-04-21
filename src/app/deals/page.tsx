@@ -1,42 +1,64 @@
 'use client';
 
 import { useProducts } from '@/hooks/useProducts';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
 import { FiZap, FiClock } from 'react-icons/fi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function DealsPage() {
-  const [timeLeft, setTimeLeft] = useState({ hours: 3, minutes: 59, seconds: 59 });
+  const { data: settings } = useSiteSettings();
+  const dealsHero = settings?.dealsHero;
+  
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   const { data, isLoading } = useProducts({
     sort: 'price-asc',
     limit: 30, 
   });
 
-  // Countdown timer
-  useState(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        let { hours, minutes, seconds } = prev;
-        seconds--;
-        if (seconds < 0) { seconds = 59; minutes--; }
-        if (minutes < 0) { minutes = 59; hours--; }
-        if (hours < 0) { hours = 23; minutes = 59; seconds = 59; }
-        return { hours, minutes, seconds };
-      });
-    }, 1000);
+  // Countdown timer based on settings
+  useEffect(() => {
+    const endTimeStr = dealsHero?.timerEndTime;
+    if (!endTimeStr) return;
+    
+    const updateTimer = () => {
+      const now = Date.now();
+      const endTime = new Date(endTimeStr).getTime();
+      const diff = endTime - now;
+      
+      if (diff <= 0) {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeLeft({ hours, minutes, seconds });
+    };
+    
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
-  });
+  }, [dealsHero?.timerEndTime]);
 
   const products = data?.products || [];
+
+  const bgGradient = dealsHero?.bgGradient || 'from-red-600 via-orange-500 to-yellow-500';
+  const bgColor = dealsHero?.bgColor || '#ea580c';
+  const title = dealsHero?.title || 'Flash Deals';
+  const subtitle = dealsHero?.subtitle || 'Grab these amazing deals before they are gone!';
 
   return (
     <div className="min-h-screen">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+      <div className="relative overflow-hidden" style={{ background: bgColor }}>
+        <div className={`absolute inset-0 bg-gradient-to-r ${bgGradient}`}>
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+          </div>
         </div>
         <div className="relative py-12 md:py-16 px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-medium mb-4">
@@ -44,29 +66,31 @@ export default function DealsPage() {
             Limited Time Offers
           </div>
           <h1 className="text-4xl font-black text-white sm:text-5xl md:text-6xl">
-            Flash Deals
+            {title}
           </h1>
           <p className="mt-3 text-lg text-white/90 max-w-xl mx-auto">
-            Grab these amazing deals before they're gone!
+            {subtitle}
           </p>
 
           {/* Countdown Timer */}
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
-              <p className="text-2xl font-black text-white">{String(timeLeft.hours).padStart(2, '0')}</p>
-              <p className="text-xs text-white/70 uppercase">Hours</p>
+          {(timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0) && (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
+                <p className="text-2xl font-black text-white">{String(timeLeft.hours).padStart(2, '0')}</p>
+                <p className="text-xs text-white/70 uppercase">Hours</p>
+              </div>
+              <span className="text-2xl font-bold text-white">:</span>
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
+                <p className="text-2xl font-black text-white">{String(timeLeft.minutes).padStart(2, '0')}</p>
+                <p className="text-xs text-white/70 uppercase">Mins</p>
+              </div>
+              <span className="text-2xl font-bold text-white">:</span>
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
+                <p className="text-2xl font-black text-white">{String(timeLeft.seconds).padStart(2, '0')}</p>
+                <p className="text-xs text-white/70 uppercase">Secs</p>
+              </div>
             </div>
-            <span className="text-2xl font-bold text-white">:</span>
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
-              <p className="text-2xl font-black text-white">{String(timeLeft.minutes).padStart(2, '0')}</p>
-              <p className="text-xs text-white/70 uppercase">Mins</p>
-            </div>
-            <span className="text-2xl font-bold text-white">:</span>
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
-              <p className="text-2xl font-black text-white">{String(timeLeft.seconds).padStart(2, '0')}</p>
-              <p className="text-xs text-white/70 uppercase">Secs</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

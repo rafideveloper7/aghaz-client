@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { FiShoppingCart, FiMenu, FiX, FiSearch, FiChevronDown, FiGrid } from 'react-icons/fi';
+import { FiShoppingCart, FiMenu, FiX, FiSearch, FiChevronDown, FiGrid, FiPhone } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -163,6 +163,12 @@ export function Header() {
               >
                 <span className="hidden lg:inline">About</span>
               </Link>
+              <Link
+                href="/contact"
+                className="px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+              >
+                <span className="hidden lg:inline">Contact</span>
+              </Link>
               
               {/* Categories Dropdown */}
               <div className="relative" ref={categoriesRef}>
@@ -211,6 +217,15 @@ export function Header() {
                 <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               </div>
             </form>
+
+            {/* Contact Button - Always visible on all screens */}
+            <Link
+              href="/contact"
+              className="hidden md:flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+            >
+              <FiPhone size={14} />
+              <span>Contact</span>
+            </Link>
 
             {/* Actions */}
             <div className="flex items-center gap-2">

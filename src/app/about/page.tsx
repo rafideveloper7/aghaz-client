@@ -38,6 +38,12 @@ export default function AboutPage() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const { data: settings } = useSiteSettings();
   const [contact, setContact] = useState({ email: 'support@aghaz.com', phone: '+92 300 1234567', address: 'Lahore, Pakistan', whatsapp: '923001234567' });
+  const aboutHero = settings?.aboutHero;
+  
+  const bgGradient = aboutHero?.bgGradient || 'from-gray-900 via-gray-800 to-emerald-900';
+  const bgColor = aboutHero?.bgColor || '#111827';
+  const title = aboutHero?.title || 'About Aghaz';
+  const subtitle = aboutHero?.subtitle || 'Your trusted destination for premium smart gadgets and innovative products';
 
   useEffect(() => {
     axios.get(`${API_URL}/api/footer-social`).then(res => {
@@ -58,13 +64,13 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900" />
+      <div className="relative h-[50vh] min-h-[400px] overflow-hidden" style={{ background: bgColor }}>
+        <div className={`absolute inset-0 bg-gradient-to-br ${bgGradient}`} />
         <div className="relative h-full flex items-center justify-center text-center px-4">
           <div>
-            <h1 className="text-4xl font-black text-white sm:text-5xl md:text-6xl">About Aghaz</h1>
+            <h1 className="text-4xl font-black text-white sm:text-5xl md:text-6xl">{title}</h1>
             <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
-              Your trusted destination for premium smart gadgets and innovative products
+              {subtitle}
             </p>
           </div>
         </div>

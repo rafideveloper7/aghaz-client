@@ -121,6 +121,18 @@ export interface OrderResponse {
   createdAt: string;
 }
 
+export interface PageHero {
+  bgColor?: string;
+  bgGradient?: string;
+  bgImage?: string;
+  title?: string;
+  subtitle?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  image?: string;
+  timerEndTime?: string;
+}
+
 export interface SiteSettings {
   _id: string;
   logo: string;
@@ -135,6 +147,10 @@ export interface SiteSettings {
   paymentMethods: PaymentMethod[];
   reviewsEnabled: boolean;
   reviewsRequireApproval: boolean;
+  newArrivalsHero?: PageHero;
+  aboutHero?: PageHero;
+  dealsHero?: PageHero;
+  dealsEndTime?: string;
 }
 
 export interface ContactMessagePayload {
