@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { FiShoppingCart, FiMenu, FiX } from 'react-icons/fi';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { FiShoppingCart, FiMenu, FiX, FiSearch, FiChevronDown, FiGrid } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { SITE_NAME } from '@/lib/constants';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useCategories } from '@/hooks/useCategories';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -23,13 +24,26 @@ interface SiteLogo {
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const getItemCount = useCartStore((state) => state.getItemCount);
   const cartCount = getItemCount();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const categoriesRef = useRef<HTMLDivElement>(null);
   const { data: settings, isLoading: settingsLoading } = useSiteSettings();
+  const { data: categories } = useCategories();
+
+  const handleSearch = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  }, [router, searchQuery]);
 
   useEffect(() => {
     setMounted(true);
@@ -71,6 +85,18 @@ export function Header() {
     );
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target as Node)) {
+        setCategoriesOpen(false);
+      }
+    };
+    if (categoriesOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [categoriesOpen]);
+
   return (
     <>
       <header
@@ -84,9 +110,23 @@ export function Header() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex h-16 sm:h-18 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <LogoContent />
             </Link>
+
+            {/* Mobile Search - Visible on all screen sizes */}
+            <form onSubmit={handleSearch} className="flex md:hidden flex-1 max-w-[180px] ml-2">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full h-8 pl-8 pr-2 rounded-lg border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+                <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+              </div>
+            </form>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1">
@@ -123,7 +163,54 @@ export function Header() {
               >
                 <span className="hidden lg:inline">About</span>
               </Link>
+              
+              {/* Categories Dropdown */}
+              <div className="relative" ref={categoriesRef}>
+                <button
+                  onClick={() => setCategoriesOpen(!categoriesOpen)}
+                  className="flex items-center gap-1 px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+                >
+                  <FiGrid size={14} />
+                  <span className="hidden lg:inline">Categories</span>
+                  <FiChevronDown size={12} className={cn('transition-transform', categoriesOpen && 'rotate-180')} />
+                </button>
+                <AnimatePresence>
+                  {categoriesOpen && categories?.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                    >
+                      {categories.slice(0, 8).map((cat: { _id: string; name: string; slug: string }) => (
+                        <Link
+                          key={cat._id}
+                          href={`/shop?category=${cat.slug}`}
+                          onClick={() => setCategoriesOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-primary"
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
+
+            {/* Search Bar - Visible on all devices */}
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              </div>
+            </form>
 
             {/* Actions */}
             <div className="flex items-center gap-2">

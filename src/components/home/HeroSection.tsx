@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiArrowRight, FiCheckCircle, FiShoppingCart, FiDollarSign, FiTruck, FiRefreshCcw } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import { API_URL } from '@/lib/constants';
 import type { HeroSlide } from '@/types';
@@ -277,7 +277,59 @@ export function HeroSection() {
                         <FiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </motion.div>
+
+                    {/* Trust Badges in Hero */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.6 }}
+                      className="mt-8 flex flex-wrap gap-4"
+                    >
+                      <div className="flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs text-white">
+                        <FiDollarSign className="h-3.5 w-3.5" />
+                        <span>Cash on Delivery</span>
+                      </div>
+                      <div className="flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs text-white">
+                        <FiTruck className="h-3.5 w-3.5" />
+                        <span>Fast Delivery 2-5 Days</span>
+                      </div>
+                      <div className="flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs text-white">
+                        <FiRefreshCcw className="h-3.5 w-3.5" />
+                        <span>7-Day Returns</span>
+                      </div>
+                    </motion.div>
                   </div>
+                
+                {slide.rightSideMediaType && slide.rightSideMediaType !== 'none' && (
+                  <div className="hidden lg:block relative">
+                    {slide.rightSideMediaType === 'image' && slide.rightSideMediaUrl && (
+                      <Image
+                        src={slide.rightSideMediaUrl}
+                        alt={slide.rightSideCardTitle || 'Hero image'}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    )}
+                    {slide.rightSideMediaType === 'card' && (
+                      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                        {slide.rightSideCardTitle && (
+                          <h3 className="text-white font-bold text-lg">{slide.rightSideCardTitle}</h3>
+                        )}
+                        {slide.rightSideCardSubtitle && (
+                          <p className="text-white/80 text-sm mt-2">{slide.rightSideCardSubtitle}</p>
+                        )}
+                        <Link
+                          href="/shop"
+                          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-bold text-gray-900"
+                        >
+                          <FiShoppingCart className="h-4 w-4" />
+                          Shop Now
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
                 </div>
                
               </motion.div>

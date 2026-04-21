@@ -94,6 +94,7 @@ export interface OrderPayload {
   totalAmount: number;
   paymentMethodCode: string;
   paymentReference?: string;
+  paymentProofUrl?: string;
 }
 
 export interface OrderResponse {

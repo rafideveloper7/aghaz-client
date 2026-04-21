@@ -48,8 +48,11 @@ export default function ProductPage() {
 
   const discount = calculateDiscount(product.price, product.comparePrice);
 
+  const stock = product.stock ?? 0;
+  const inStock = stock > 0;
+
   const handleAddToCart = () => {
-    if (!product.inStock) {
+    if (!inStock) {
       toast.error('This product is currently out of stock');
       return;
     }
@@ -142,9 +145,9 @@ export default function ProductPage() {
 
             {/* Stock Status */}
             <div className="mt-3">
-              {product.inStock ? (
+              {product.stock > 0 ? (
                 <Badge variant="success" size="sm">
-                  In Stock
+                  In Stock ({product.stock} available)
                 </Badge>
               ) : (
                 <Badge variant="danger" size="sm">
@@ -155,9 +158,12 @@ export default function ProductPage() {
 
             {/* Description */}
             {product.description && (
-              <p className="mt-4 text-sm leading-relaxed text-text-secondary">
-                {product.description}
-              </p>
+              <div 
+                className="mt-4 text-sm leading-relaxed text-text-secondary whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ 
+                  __html: product.description.replace(/\n/g, '<br/>') 
+                }}
+              />
             )}
 
             {/* Video Embed */}
@@ -204,10 +210,10 @@ export default function ProductPage() {
                 fullWidth
                 asMotion
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={!inStock}
               >
                 <FiShoppingCart size={18} />
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {inStock ? 'Add to Cart' : 'Out of Stock'}
               </Button>
             </div>
 
@@ -251,7 +257,7 @@ export default function ProductPage() {
             variant="primary"
             size="md"
             onClick={handleAddToCart}
-            disabled={!product.inStock}
+            disabled={!inStock}
             className="min-w-[120px] text-sm py-2"
             asMotion
           >

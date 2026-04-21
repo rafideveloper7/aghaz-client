@@ -54,20 +54,16 @@ export default function HomePage() {
                 Checkout that feels trustworthy.
               </h2>
               <p className="mt-3 text-sm leading-6 text-text-secondary md:text-base">
-                Free delivery above Rs. 2000, COD for confidence, and pay-now options when customers are ready.
+                COD for confidence, and pay-now options when customers are ready.
               </p>
-              <div className="mt-6 grid grid-cols-3 gap-3 text-center text-xs">
-                <div className="rounded-2xl bg-primary-50 px-3 py-4 text-primary-900">
-                  <p className="text-lg font-black">2000+</p>
-                  <p className="mt-1 text-primary-700">Free Delivery</p>
-                </div>
+              <div className="mt-6 grid grid-cols-2 gap-3 text-center text-xs">
                 <div className="rounded-2xl bg-amber-50 px-3 py-4 text-amber-900">
                   <p className="text-lg font-black">COD</p>
                   <p className="mt-1 text-amber-700">Available</p>
                 </div>
                 <div className="rounded-2xl bg-slate-100 px-3 py-4 text-slate-900">
-                  <p className="text-lg font-black">24h</p>
-                  <p className="mt-1 text-slate-600">Confirmation</p>
+                  <p className="text-lg font-black">2-5 Days</p>
+                  <p className="mt-1 text-slate-600">Fast Delivery</p>
                 </div>
               </div>
               <a

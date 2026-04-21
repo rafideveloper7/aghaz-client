@@ -1,27 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import { FiPlus, FiShoppingCart } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
+import { FiPlus, FiShoppingCart, FiZap } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice, calculateDiscount, cn } from '@/lib/utils';
 import type { Product } from '@/types';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { SafeImage } from '@/components/ui/SafeImage';
+import toast from 'react-hot-toast';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const [isAdding, setIsAdding] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
   const discount = calculateDiscount(product.price, product.comparePrice);
-  const inStock = product.stock !== undefined ? product.stock > 0 : product.inStock !== false;
+  const stock = product.stock ?? 0;
+  const inStock = stock > 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!inStock) return;
     setIsAdding(true);
     addItem({
       product: product._id,
@@ -30,6 +36,25 @@ export function ProductCard({ product }: ProductCardProps) {
       image: product.images[0] || '',
     });
     setTimeout(() => setIsAdding(false), 600);
+    toast.success('Added to cart');
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!inStock) return;
+    setIsBuying(true);
+    addItem({
+      product: product._id,
+      title: product.title,
+      price: product.price,
+      quantity: 1,
+      image: product.images[0] || '',
+    });
+    setTimeout(() => {
+      setIsBuying(false);
+      router.push('/checkout');
+    }, 500);
   };
 
   return (
@@ -53,7 +78,7 @@ export function ProductCard({ product }: ProductCardProps) {
               -{discount}%
             </span>
           )}
-          {!inStock && (
+          {stock === 0 && (
             <span className="absolute left-2 top-2 rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-bold text-white md:text-xs">
               Out of Stock
             </span>
@@ -76,27 +101,44 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={!inStock}
-            className={cn(
-              'mt-1.5 flex w-full items-center justify-center gap-1 rounded-lg py-1 text-xs font-semibold transition-all duration-200 md:mt-3 md:h-11 md:py-0 md:text-sm flex-shrink-0',
-              inStock
-                ? 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark'
-                : 'cursor-not-allowed bg-gray-100 text-text-secondary',
-              isAdding && 'scale-95'
-            )}
-            aria-label={`Add ${product.title} to cart`}
-          >
-            {isAdding ? (
-              <FiShoppingCart size={14} />
-            ) : (
-              <FiPlus size={14} />
-            )}
-            <span className="hidden md:inline">
-              {inStock ? 'Add to Cart' : 'Out of Stock'}
-            </span>
-          </button>
+          <div className="mt-1.5 flex gap-1.5 md:mt-3">
+            <button
+              onClick={handleBuyNow}
+              disabled={!inStock || isBuying}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1 rounded-lg py-1 text-xs font-semibold transition-all duration-200 md:h-11 md:py-0 md:text-sm flex-shrink-0',
+                inStock
+                  ? 'bg-gray-900 text-white hover:bg-gray-800 active:bg-gray-900'
+                  : 'cursor-not-allowed bg-gray-100 text-text-secondary',
+                isBuying && 'scale-95'
+              )}
+              aria-label={`Buy ${product.title} now`}
+            >
+              <FiZap size={14} />
+              <span className="hidden md:inline">Buy</span>
+            </button>
+            <button
+              onClick={handleAddToCart}
+              disabled={!inStock || isAdding}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1 rounded-lg py-1 text-xs font-semibold transition-all duration-200 md:h-11 md:py-0 md:text-sm flex-shrink-0',
+                inStock
+                  ? 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark'
+                  : 'cursor-not-allowed bg-gray-100 text-text-secondary',
+                isAdding && 'scale-95'
+              )}
+              aria-label={`Add ${product.title} to cart`}
+            >
+              {isAdding ? (
+                <FiShoppingCart size={14} />
+              ) : (
+                <FiPlus size={14} />
+              )}
+              <span className="hidden md:inline">
+                {inStock ? 'Cart' : 'Out'}
+              </span>
+            </button>
+          </div>
         </div>
       </motion.div>
     </Link>

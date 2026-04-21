@@ -13,7 +13,8 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import type { OrderPayload } from '@/types';
 import { calculateDeliveryFee, formatPrice } from '@/lib/utils';
-import { FiCheckCircle, FiCreditCard, FiHome, FiMapPin, FiPhone, FiShield, FiUser } from 'react-icons/fi';
+import { FiCheckCircle, FiCreditCard, FiHome, FiMapPin, FiPhone, FiShield, FiUser, FiUpload, FiX } from 'react-icons/fi';
+import { uploadApi } from '@/lib/api';
 
 const checkoutSchema = z.object({
   customerName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -84,6 +85,23 @@ export function CheckoutForm() {
     },
   });
   const paymentReference = watch('paymentReference');
+  const [paymentProofUrl, setPaymentProofUrl] = useState('');
+  const [uploadingProof, setUploadingProof] = useState(false);
+
+  const handlePaymentProofUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingProof(true);
+    try {
+      const res = await uploadApi.uploadImage(file);
+      setPaymentProofUrl(res.data.data.url);
+      toast.success('Payment proof uploaded');
+    } catch {
+      toast.error('Upload failed');
+    } finally {
+      setUploadingProof(false);
+    }
+  };
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
@@ -113,6 +131,7 @@ export function CheckoutForm() {
         totalAmount: grandTotal,
         paymentMethodCode: selectedPaymentMethod.code,
         paymentReference: data.paymentReference?.trim() || undefined,
+        paymentProofUrl: paymentProofUrl || undefined,
       };
 
       const order = await createOrder.mutateAsync(orderPayload);
@@ -252,6 +271,46 @@ export function CheckoutForm() {
           <p className="mt-2 text-xs leading-5 text-amber-700">
             Share the transaction ID after sending {formatPrice(grandTotal)} to help the admin verify your payment quickly.
           </p>
+          
+          {/* Payment Proof Image Upload */}
+          <div className="mt-4">
+            <label className="block text-xs font-medium text-amber-800 mb-2">Upload Payment Proof (Screenshot)</label>
+            <div className="flex gap-2">
+              <label className="flex items-center gap-2 cursor-pointer rounded-lg bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm border border-gray-200 hover:bg-gray-50">
+                {uploadingProof ? (
+                  <span className="animate-spin h-4 w-4 border-2 border-amber-500 border-t-transparent rounded-full" />
+                ) : (
+                  <FiUpload className="h-4 w-4" />
+                )}
+                {uploadingProof ? 'Uploading...' : 'Upload Proof'}
+                <input 
+                  type="file" 
+                  accept="image/jpeg,image/png,image/webp,image/gif" 
+                  onChange={handlePaymentProofUpload} 
+                  className="hidden" 
+                  disabled={uploadingProof} 
+                />
+              </label>
+              {paymentProofUrl && (
+                <button
+                  type="button"
+                  onClick={() => setPaymentProofUrl('')}
+                  className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600"
+                >
+                  <FiX className="h-3 w-3" />
+                  Remove
+                </button>
+              )}
+            </div>
+            {paymentProofUrl && (
+              <div className="mt-2 relative h-20 w-32 rounded-lg overflow-hidden border border-gray-200">
+                <img src={paymentProofUrl} alt="Payment proof" className="h-full w-full object-cover" />
+              </div>
+            )}
+            <p className="mt-2 text-xs leading-5 text-amber-700">
+              Optional: Upload a screenshot of your payment confirmation.
+            </p>
+          </div>
         </div>
       )}
 
