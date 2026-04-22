@@ -9,6 +9,7 @@ import type { Product } from '@/types';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { SafeImage } from '@/components/ui/SafeImage';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import toast from 'react-hot-toast';
 
 interface ProductCardProps {
@@ -55,7 +56,7 @@ export function ProductCard({ product }: ProductCardProps) {
       >
         <div className="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
           <SafeImage
-            src={product.images[0] || '/images/placeholder.png'}
+            src={product.images[0] || PLACEHOLDER_IMAGE}
             alt={product.title}
             fill
             sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"

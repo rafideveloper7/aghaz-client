@@ -36,7 +36,7 @@ function ShopBanner() {
   const rightSideImage = shopHero?.rightSideImage || '';
 
   return (
-    <div className="relative overflow-hidden" style={{ background: bgColor }}>
+    <div className="relative overflow-hidden " style={{ background: bgColor }}>
       {bgImage && (
         <div className="absolute inset-0">
           <Image 

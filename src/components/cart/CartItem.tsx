@@ -7,6 +7,7 @@ import { formatPrice, cn } from '@/lib/utils';
 import type { CartItem as CartItemType } from '@/types';
 import { motion } from 'framer-motion';
 import { SafeImage } from '@/components/ui/SafeImage';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 
 interface CartItemProps {
   item: CartItemType;
@@ -31,7 +32,7 @@ export function CartItem({ item }: CartItemProps) {
         className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100 md:h-24 md:w-24"
       >
         <SafeImage
-          src={item.image || '/images/placeholder.png'}
+          src={item.image || PLACEHOLDER_IMAGE}
           alt={item.title}
           fill
           className="object-cover"

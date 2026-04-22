@@ -5,7 +5,7 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:30
 export const SITE_NAME = 'Aghaz';
 export const SITE_TAGLINE = 'Discover Smart Living';
 
-export const PLACEHOLDER_IMAGE = '/images/placeholder.png';
+export const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x400/e2e8f0/64748b?text=No+Image';
 
 export const DEFAULT_PAGE_SIZE = 20;
 
