@@ -48,7 +48,6 @@ export function ProductCard({ product }: ProductCardProps) {
       product: product._id,
       title: product.title,
       price: product.price,
-      quantity: 1,
       image: product.images[0] || '',
     });
     setTimeout(() => {

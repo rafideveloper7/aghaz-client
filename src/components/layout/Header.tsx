@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { FiShoppingCart, FiMenu, FiX, FiSearch, FiChevronDown, FiGrid, FiPhone } from 'react-icons/fi';
 import { useCartStore } from '@/store/cartStore';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -25,7 +25,6 @@ interface SiteLogo {
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const getItemCount = useCartStore((state) => state.getItemCount);
   const cartCount = getItemCount();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -181,14 +180,14 @@ export function Header() {
                   <FiChevronDown size={12} className={cn('transition-transform', categoriesOpen && 'rotate-180')} />
                 </button>
                 <AnimatePresence>
-                  {categoriesOpen && categories?.length > 0 && (
+                  {categoriesOpen && (categories?.length ?? 0) > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
                     >
-                      {categories.slice(0, 8).map((cat: { _id: string; name: string; slug: string }) => (
+                      {(categories || []).slice(0, 8).map((cat: { _id: string; name: string; slug: string }) => (
                         <Link
                           key={cat._id}
                           href={`/shop?category=${cat.slug}`}

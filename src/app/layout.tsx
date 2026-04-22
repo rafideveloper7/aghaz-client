@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Manrope, Sora } from 'next/font/google';
+import { Suspense } from 'react';
 import { Providers } from '@/components/layout/Providers';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';

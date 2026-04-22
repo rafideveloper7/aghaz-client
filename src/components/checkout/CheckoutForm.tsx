@@ -94,7 +94,7 @@ export function CheckoutForm() {
     setUploadingProof(true);
     try {
       const res = await uploadApi.uploadImage(file);
-      setPaymentProofUrl(res.data.data.url);
+      setPaymentProofUrl(res.url);
       toast.success('Payment proof uploaded');
     } catch {
       toast.error('Upload failed');
