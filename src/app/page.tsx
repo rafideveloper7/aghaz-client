@@ -7,6 +7,8 @@ export default function HomePage() {
   return (
     <div>
       <HeroSection />
+
+      <CategorySection />
       
       <ProductScroll
         title="🔥 Hot Products"
@@ -22,7 +24,7 @@ export default function HomePage() {
         limit={10}
       />
 
-      <CategorySection />
+      
       <ProductScroll
         title="Special Offers"
         subtitle="Deals you don't want to miss"

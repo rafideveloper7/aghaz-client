@@ -109,7 +109,7 @@ export function Header() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex h-16 sm:h-18 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <Link href="/" className="flex items-center gap-3 flex-shrink-0 mr-1">
               <LogoContent />
             </Link>
 
@@ -156,19 +156,13 @@ export function Header() {
               >
                 🔥 <span className="hidden lg:inline">Deals</span>
               </Link>
-              <Link
+<Link
                 href="/about"
                 className="px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
               >
                 <span className="hidden lg:inline">About</span>
               </Link>
-              <Link
-                href="/contact"
-                className="px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
-              >
-                <span className="hidden lg:inline">Contact</span>
-              </Link>
-              
+               
               {/* Categories Dropdown */}
               <div className="relative" ref={categoriesRef}>
                 <button
@@ -204,16 +198,16 @@ export function Header() {
             </nav>
 
             {/* Search Bar - Visible on all devices */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4">
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-[180px] mx-2 lg:mx-4">
               <div className="relative w-full">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  placeholder="Search..."
+                  className="w-full h-8 lg:h-9 pl-8 lg:pl-9 pr-3 lg:pr-4 rounded-lg lg:rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <FiSearch className="absolute left-2.5 lg:left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
               </div>
             </form>
 

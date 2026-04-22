@@ -43,17 +43,7 @@ export function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!inStock) return;
-    setIsBuying(true);
-    addItem({
-      product: product._id,
-      title: product.title,
-      price: product.price,
-      image: product.images[0] || '',
-    });
-    setTimeout(() => {
-      setIsBuying(false);
-      router.push('/checkout');
-    }, 500);
+    router.push('/checkout');
   };
 
   return (

@@ -47,9 +47,9 @@ export function CategorySection() {
       </div>
 
       {/* Marquee Categories - Scrolling from right to left */}
-      <div className="relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+      <div className="relative overflow-hidden w-[95%] md:w-[70%] mx-auto">
+        <div className="absolute left-0 top-0 bottom-0 w-10 md:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-10 md:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
         
         <div className="overflow-hidden">
           <motion.div
@@ -58,7 +58,7 @@ export function CategorySection() {
               x: [0, -50 * (categories?.length || 1)]
             }}
             transition={{
-              duration: categories?.length ? categories.length * 8 : 20,
+              duration: 15, // Fixed faster speed (lower = faster)
               repeat: Infinity,
               ease: 'linear'
             }}
@@ -81,7 +81,7 @@ export function CategorySection() {
       </div>
 
       {/* Static Grid for visual reference */}
-      <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
+      {/* <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
         {categories.slice(0, 7).map((category: { _id: string; name: string; slug: string }, index: number) => {
           const Icon = iconPool[index % iconPool.length];
           return (
@@ -106,7 +106,7 @@ export function CategorySection() {
             </motion.div>
           );
         })}
-      </div>
+      </div> */}
     </section>
   );
 }
