@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomBar } from '@/components/layout/MobileBottomBar';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
+import { TopBanner } from '@/components/layout/TopBanner';
 import './globals.css';
 
 const manrope = Manrope({
@@ -56,8 +57,9 @@ export default function RootLayout({
     <html lang="en" className={`${manrope.variable} ${sora.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <Providers>
+          <TopBanner />
           <Header />
-          <main className="min-h-screen pb-20 md:pb-0">{children}</main>
+          <main className="min-h-screen pt-16 md:pt-18 pb-20 md:pb-0">{children}</main>
           <Footer />
           <MobileBottomBar />
           <AnnouncementBar />

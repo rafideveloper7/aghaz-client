@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiArrowRight, FiCheckCircle, FiShoppingCart, FiDollarSign, FiTruck, FiRefreshCcw } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import { API_URL } from '@/lib/constants';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import type { HeroSlide } from '@/types';
 
 const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
@@ -70,6 +71,9 @@ export function HeroSection() {
     staleTime: 60 * 1000,
   });
 
+  const { data: settings } = useSiteSettings();
+  const homeHero = settings?.homeHero;
+
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [mediaErrors, setMediaErrors] = useState<Record<string, boolean>>({});
@@ -113,21 +117,45 @@ export function HeroSection() {
 
   // Always show fallback banner (hero not configured or API failed)
   if (!slides.length) {
+    const title = homeHero?.title || 'Discover Smart Living';
+    const subtitle = homeHero?.subtitle || 'Curated products that make your life easier, smarter, and more enjoyable.';
+    const ctaText = homeHero?.ctaText || 'Shop Now';
+    const ctaLink = homeHero?.ctaLink || '/shop';
+    
+    const bgStyle = homeHero?.bgGradientStart 
+      ? { background: `linear-gradient(to bottom right, ${homeHero.bgGradientStart}, ${homeHero.bgGradientMid || homeHero.bgGradientStart}, ${homeHero.bgGradientEnd || homeHero.bgColor || '#000000'})` }
+      : { background: homeHero?.bgColor || '#065f46' };
+
+    const bgImage = homeHero?.bgImage;
+    
     return (
-      <section className="relative flex min-h-[300px] items-center justify-center bg-gradient-to-br from-emerald-900 via-slate-900 to-black md:min-h-[350px]">
-        <div className="mx-auto max-w-7xl px-4 py-8 text-center">
-          <h1 className="font-display text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
-            Discover Smart Living
+      <section className="relative flex min-h-[300px] items-center justify-center md:min-h-[350px]" style={bgStyle}>
+        {bgImage && (
+          <div className="absolute inset-0">
+            <Image src={bgImage} alt="Background" fill className="object-cover" />
+            <div className="absolute inset-0 bg-black/60" />
+          </div>
+        )}
+        <div className="relative mx-auto max-w-7xl px-4 py-8 text-center">
+          <h1 
+            className="font-display text-3xl font-black leading-tight sm:text-4xl md:text-5xl"
+            style={{ color: homeHero?.titleColor || '#ffffff', fontSize: `${Math.min(homeHero?.titleFontSize || 48, 72)}px` }}
+          >
+            {title}
           </h1>
-          <p className="mt-3 max-w-xl text-base leading-6 text-white/78 mx-auto">
-            Curated products that make your life easier, smarter, and more enjoyable.
+          <p 
+            className="mt-3 max-w-xl text-base leading-6 mx-auto"
+            style={{ color: homeHero?.subtitleColor || '#c4b5fd', fontSize: `${homeHero?.subtitleFontSize || 16}px` }}
+          >
+            {subtitle}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              href="/shop"
-              className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-gray-950 shadow-lg transition-all hover:-translate-y-0.5"
+              href={ctaLink}
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold shadow-lg transition-all hover:-translate-y-0.5"
+              style={{ backgroundColor: homeHero?.ctaBgColor || '#ffffff', color: homeHero?.ctaTextColor || '#000000' }}
             >
-              Shop Now
+              {ctaText}
               <FiArrowRight className="h-4 w-4" />
             </Link>
           </div>

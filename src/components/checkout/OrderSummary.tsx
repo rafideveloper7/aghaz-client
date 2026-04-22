@@ -47,15 +47,8 @@ export function OrderSummary({ variant = 'sidebar' }: OrderSummaryProps) {
         </div>
         <div className="flex justify-between text-text-secondary">
           <span>Delivery</span>
-          <span className={deliveryFee === 0 ? 'font-semibold text-primary' : ''}>
-            {deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}
-          </span>
+          <span>{formatPrice(deliveryFee)}</span>
         </div>
-        {deliveryFee > 0 && (
-          <p className="text-xs text-primary">
-            Add {formatPrice(2000 - subtotal)} more for free delivery
-          </p>
-        )}
         <div className="flex justify-between border-t border-gray-100 pt-2 text-base font-bold text-text-primary md:text-lg md:pt-3">
           <span>Total</span>
           <span>{formatPrice(total)}</span>
