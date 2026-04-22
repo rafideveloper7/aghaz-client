@@ -35,7 +35,7 @@ export function CategorySection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.1 }}
+          transition={{ duration: 0.6 }}
         >
           <h2 className="text-2xl font-black text-text-primary md:text-3xl ">
             Shop by Category
@@ -58,7 +58,7 @@ export function CategorySection() {
               x: [0, -50 * (categories?.length || 1)]
             }}
             transition={{
-              duration: 5, // Fixed faster speed (lower = faster)
+              duration: 12, // Fixed faster speed (lower = faster)
               repeat: Infinity,
               ease: 'linear'
             }}

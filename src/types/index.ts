@@ -135,6 +135,11 @@ export interface PageHero {
   ctaLink?: string;
   image?: string;
   timerEndTime?: string;
+  titleColor?: string;
+  subtitleColor?: string;
+  titleFontSize?: number;
+  subtitleFontSize?: number;
+  rightSideImage?: string;
 }
 
 export interface SiteSettings {
