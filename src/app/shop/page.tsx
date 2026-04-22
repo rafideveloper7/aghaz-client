@@ -13,8 +13,8 @@ import { useInfiniteProducts } from '@/hooks/useProducts';
 import { useCategories } from '@/hooks/useCategories';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
-import { FiSliders, FiGrid, FiPackage, FiSmartphone, FiHome, FiHeart, FiSun, FiStar, FiBox, FiShoppingBag, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { useState, useRef } from 'react';
+import { FiSliders, FiGrid, FiPackage, FiSmartphone, FiHome, FiHeart, FiSun, FiStar, FiBox, FiShoppingBag } from 'react-icons/fi';
+import { useState } from 'react';
 import type { SortOption } from '@/types';
 
 const iconPool = [FiGrid, FiPackage, FiSmartphone, FiHome, FiHeart, FiSun, FiStar, FiBox];
@@ -23,9 +23,6 @@ function ShopBanner() {
   const { data: categories } = useCategories();
   const { data: settings } = useSiteSettings();
   const shopHero = settings?.shopHero;
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
 
   const bgColor = shopHero?.bgColor || '#1a1a2e';
   const bgGradient = shopHero?.bgGradient || 'from-purple-700 via-indigo-600 to-blue-500';
@@ -38,24 +35,8 @@ function ShopBanner() {
   const subtitleFontSize = shopHero?.subtitleFontSize || 18;
   const rightSideImage = shopHero?.rightSideImage || '';
 
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 200;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const handleMarqueeScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    setShowLeftArrow(target.scrollLeft > 0);
-    setShowRightArrow(target.scrollLeft < target.scrollWidth - target.clientWidth - 10);
-  };
-
   return (
-    <div className="relative overflow-hidden mt-6" style={{ background: bgColor }}>
+    <div className="relative overflow-hidden" style={{ background: bgColor }}>
       {bgImage && (
         <div className="absolute inset-0">
           <Image 
@@ -77,110 +58,84 @@ function ShopBanner() {
       <div className="absolute top-1/2 -translate-y-1/2 left-8 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-12 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
       
-      <div className="relative py-10 md:py-14 px-4 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white/90 text-sm font-medium mb-4">
-            <FiShoppingBag className="h-4 w-4" />
-            {categories?.length || 0} Categories
-          </div>
-          
-          {/* Title and Subtitle */}
-          <h1 
-            className="font-black text-white sm:text-4xl md:text-5xl lg:text-6xl"
-            style={{ 
-              fontSize: `${titleFontSize}px`,
-              color: titleColor,
-              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-            }}
+      <div className="relative flex items-center justify-between px-4 md:px-8 lg:px-12 py-10 md:py-14 max-w-7xl mx-auto text-center">
+        {/* Left Side Content */}
+        <div className="w-full mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            {title}
-          </h1>
-          <p 
-            className="mt-3 max-w-xl mx-auto"
-            style={{ 
-              fontSize: `${subtitleFontSize}px`,
-              color: subtitleColor
-            }}
-          >
-            {subtitle}
-          </p>
-        </motion.div>
-
-        {/* Categories Marquee with Scroll Controls */}
-        {categories && categories.length > 0 && (
-          <div className="mt-8 relative">
-            {/* Left Arrow */}
-            {showLeftArrow && (
-              <button 
-                onClick={() => handleScroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-2 text-white transition-all"
-              >
-                <FiChevronLeft size={20} />
-              </button>
-            )}
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white/90 text-sm font-medium mb-4">
+              <FiShoppingBag className="h-4 w-4" />
+              {categories?.length || 0} Categories
+            </div>
             
-            {/* Right Arrow */}
-            {showRightArrow && (
-              <button 
-                onClick={() => handleScroll('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-2 text-white transition-all"
-              >
-                <FiChevronRight size={20} />
-              </button>
-            )}
-            
-            {/* Gradient Overlays */}
-            {showLeftArrow && (
-              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#1a1a2e] to-transparent z-10 pointer-events-none" />
-            )}
-            {showRightArrow && (
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#1a1a2e] to-transparent z-10 pointer-events-none" />
-            )}
-            
-            {/* Scrollable Container */}
-            <div 
-              ref={scrollRef}
-              onScroll={handleMarqueeScroll}
-              className="overflow-x-auto scrollbar-hide scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            <h1 
+              className="font-black text-white"
+              style={{ 
+                fontSize: `${titleFontSize}px`,
+                color: titleColor,
+                textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              }}
             >
-              <div className="flex gap-3 whitespace-nowrap py-2 px-8 min-w-max">
-                {[...categories, ...categories, ...categories].map((category: { _id: string; name: string; slug: string }, index: number) => {
-                  const Icon = iconPool[index % iconPool.length];
-                  return (
-                    <Link
-                      key={`${category._id}-${index}`}
-                      href={`/shop?category=${category.slug}`}
-                      className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 px-4 md:px-5 py-2 text-xs md:text-sm font-medium text-white transition-all hover:bg-white/25 hover:border-white/30 hover:scale-105 cursor-pointer"
-                    >
-                      <Icon size={14} className="md:w-4 md:h-4" />
-                      {category.name}
-                    </Link>
-                  );
-                })}
+              {title}
+            </h1>
+            <p 
+              className="mt-3 mx-auto lg:mx-0"
+              style={{ 
+                fontSize: `${subtitleFontSize}px`,
+                color: subtitleColor
+              }}
+            >
+              {subtitle}
+            </p>
+          </motion.div>
+
+          {/* Categories Marquee */}
+          {categories && categories.length > 0 && (
+            <div className=" relative">
+              <div className="absolute left-0 top-0 bottom-0 w-10 md:w-16 z-10 pointer-events-none" style={{ background: `linear-gradient(to right, ${bgColor}, transparent)` }} />
+              <div className="absolute right-0 top-0 bottom-0 w-10 md:w-16 z-10 pointer-events-none" style={{ background: `linear-gradient(to left, ${bgColor}, transparent)` }} />
+              <div className="overflow-hidden">
+                <motion.div
+                  className="flex gap-3 whitespace-nowrap py-2 justify-center"
+                  animate={{ x: [0, -50 * (categories.length || 1)] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                >
+                  {[...categories, ...categories, ...categories].map((category: { _id: string; name: string; slug: string }, index: number) => {
+                    const Icon = iconPool[index % iconPool.length];
+                    return (
+                      <Link
+                        key={`${category._id}-${index}`}
+                        href={`/shop?category=${category.slug}`}
+                        className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 px-4 md:px-5 py-2 text-xs md:text-sm font-medium text-white transition-all hover:bg-white/25 hover:border-white/30 hover:scale-105 cursor-pointer"
+                      >
+                        <Icon size={14} className="md:w-4 md:h-4" />
+                        {category.name}
+                      </Link>
+                    );
+                  })}
+                </motion.div>
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side Image - Desktop Only */}
+        {rightSideImage && (
+          <div className="hidden lg:block flex-shrink-0 w-[240px] xl:w-[300px] ml-6">
+            <div className="relative w-full aspect-square">
+              <Image 
+                src={rightSideImage} 
+                alt="Right side" 
+                fill 
+                className="object-contain"
+              />
             </div>
           </div>
         )}
       </div>
-
-      {/* Right Side Image - Desktop Only */}
-      {rightSideImage && (
-        <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[5%] w-[200px] xl:w-[280px]">
-          <div className="relative w-full aspect-square">
-            <Image 
-              src={rightSideImage} 
-              alt="Right side" 
-              fill 
-              className="object-contain"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
