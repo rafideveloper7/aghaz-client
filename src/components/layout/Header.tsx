@@ -100,7 +100,7 @@ export function Header() {
     <>
       <header
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 transition-all duration-300',
+          'fixed left-0 right-0 top-0 z-50 transition-all duration-300 border-b bg-white/95 backdrop-blur-md shadow-md shadow-gray-200/50',
           isScrolled
             ? 'bg-white/95 backdrop-blur-md shadow-md shadow-gray-200/50'
             : 'bg-white/80 backdrop-blur-md'
@@ -111,6 +111,7 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 flex-shrink-0 mr-1">
               <LogoContent />
+              <h2 className='text-lg font-bold text-gray-900'>Aghaz</h2>
             </Link>
 
             {/* Mobile Search - Visible on all screen sizes */}
@@ -154,7 +155,7 @@ export function Header() {
                 href="/deals"
                 className="px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-orange-600 hover:bg-orange-50 transition-all"
               >
-                🔥 <span className="hidden lg:inline">Deals</span>
+                🔥 <span className=" lg:inline">Deals</span>
               </Link>
 <Link
                 href="/about"
@@ -162,6 +163,15 @@ export function Header() {
               >
                 <span className="hidden lg:inline">About</span>
               </Link>
+
+              {/* Contact Button - Always visible on all screens */}
+            <Link
+              href="/contact"
+              className="hidden md:flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+            >
+              <FiPhone size={14} />
+              <span>Contact</span>
+            </Link>
                
               {/* Categories Dropdown */}
               <div className="relative" ref={categoriesRef}>
@@ -204,21 +214,14 @@ export function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search..."
+                  placeholder="Search products..."
                   className="w-full h-8 lg:h-9 pl-8 lg:pl-9 pr-3 lg:pr-4 rounded-lg lg:rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
                 <FiSearch className="absolute left-2.5 lg:left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
               </div>
             </form>
 
-            {/* Contact Button - Always visible on all screens */}
-            <Link
-              href="/contact"
-              className="hidden md:flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
-            >
-              <FiPhone size={14} />
-              <span>Contact</span>
-            </Link>
+            
 
             {/* Actions */}
             <div className="flex items-center gap-2">
@@ -311,6 +314,38 @@ export function Header() {
                   Contact Us
                 </Link>
               </nav>
+               {/* Categories Dropdown */}
+              <div className="relative ml-4" ref={categoriesRef}>
+                <button
+                  onClick={() => setCategoriesOpen(!categoriesOpen)}
+                  className="flex items-center gap-2 px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+                >
+                  <FiGrid size={14} />
+                  <span className=" lg:inline ">Categories</span>
+                  <FiChevronDown size={12} className={cn('transition-transform', categoriesOpen && 'rotate-180')} />
+                </button>
+                <AnimatePresence>
+                  {categoriesOpen && (categories?.length ?? 0) > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                    >
+                      {(categories || []).slice(0, 8).map((cat: { _id: string; name: string; slug: string }) => (
+                        <Link
+                          key={cat._id}
+                          href={`/shop?category=${cat.slug}`}
+                          onClick={() => setCategoriesOpen(false)}
+                          className="block px-8 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-primary border "
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
           </motion.div>
         )}

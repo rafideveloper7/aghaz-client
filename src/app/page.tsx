@@ -13,23 +13,26 @@ export default function HomePage() {
       <ProductScroll
         title="🔥 Hot Products"
         subtitle="Trending right now"
-        viewAllHref="/shop?category=trending-products"
+        viewAllHref="/shop?filter=hot"
         limit={10}
+        filterType="hot"
       />
       
       <ProductScroll
-        title="Flash Deals"
+        title="⚡ Flash Deals"
         subtitle="Quick steals before they disappear"
-        viewAllHref="/shop?category=flash-deals"
+        viewAllHref="/shop?filter=deal"
         limit={10}
+        filterType="deal"
       />
 
       
       <ProductScroll
-        title="Special Offers"
+        title="🎁 Special Offers"
         subtitle="Deals you don't want to miss"
-        viewAllHref="/shop?category=special-offers"
+        viewAllHref="/shop?filter=offer"
         limit={10}
+        filterType="offer"
       />
 
       <section className="py-8 md:py-12">
@@ -80,11 +83,21 @@ export default function HomePage() {
       </section>
 
       <ProductScroll
-        title="Smart Gadgets"
+        title="✨ New Arrivals"
+        subtitle="Fresh picks just in"
+        viewAllHref="/shop?filter=newArrival"
+        limit={10}
+        filterType="newArrival"
+      />
+
+      <ProductScroll
+        title="🛠️ Smart Gadgets"
         subtitle="Innovation at your fingertips"
         viewAllHref="/shop?category=smart-gadgets"
         limit={10}
+        filterType="featured"
       />
+
       <section className="py-6 md:py-8">
         <div className="mx-auto grid max-w-7xl gap-4 px-4 lg:grid-cols-[1.5fr_1fr]">
           <div className="rounded-xl border border-white/60 bg-[linear-gradient(135deg,#fff8e6,#ffffff_40%,#ecfdf5)] p-4 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.45)] md:p-6">
@@ -98,7 +111,7 @@ export default function HomePage() {
               Best sellers, impulse buys, and proven winners curated for quick decisions.
             </p>
             <a
-              href="/shop?category=trending-products"
+              href="/shop?filter=hot"
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             >
               Shop Trending Now
@@ -116,7 +129,7 @@ export default function HomePage() {
               Urgent offers and short-run discounts designed to create momentum on the homepage.
             </p>
             <a
-              href="/shop?category=flash-deals"
+              href="/shop?filter=deal"
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             >
               See Flash Deals

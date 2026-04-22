@@ -148,7 +148,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden h-[90%]"
+      className="relative overflow-hidden max-h-[500px] md:max-h-[400px] sm:min-h-[400px] md:min-h-[450px] sm:max-h-[30%] lg:max-h-[300px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

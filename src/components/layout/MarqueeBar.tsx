@@ -53,7 +53,7 @@ export function MarqueeBar() {
       animate={{ height: 'auto', opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="relative overflow-hidden border-b border-black/10 z-[55]"
+      className=" relative  border-b border-black/10 z-[55]"
       style={{ backgroundColor: announcement.bgColor }}
     >
       <div className="flex items-center py-2.5">

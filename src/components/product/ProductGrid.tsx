@@ -7,15 +7,16 @@ import type { Product } from '@/types';
 interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
-  columns?: '3' | '4' | '5';
+  columns?: '2' | '3' | '4' | '5';
 }
 
 export function ProductGrid({
   products,
   isLoading = false,
-  columns = '3',
+  columns = '2',
 }: ProductGridProps) {
   const colClasses = {
+    '2': 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5',
     '3': 'grid-cols-3 md:grid-cols-4 lg:grid-cols-5',
     '4': 'grid-cols-3 md:grid-cols-4 lg:grid-cols-5',
     '5': 'grid-cols-3 md:grid-cols-4 lg:grid-cols-5',

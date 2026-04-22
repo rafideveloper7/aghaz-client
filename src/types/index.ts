@@ -9,6 +9,10 @@ export interface Product {
   category: string | { _id: string; name: string; slug: string };
   tags?: string[];
   isFeatured?: boolean;
+  isHot?: boolean;
+  isDeal?: boolean;
+  isOffer?: boolean;
+  isNewArrival?: boolean;
   isActive?: boolean;
   inStock: boolean;
   stock?: number;
@@ -150,6 +154,7 @@ export interface SiteSettings {
   newArrivalsHero?: PageHero;
   aboutHero?: PageHero;
   dealsHero?: PageHero;
+  shopHero?: PageHero;
   dealsEndTime?: string;
 }
 
@@ -168,6 +173,10 @@ export interface ProductsQueryParams {
   search?: string;
   sort?: 'latest' | 'price-asc' | 'price-desc';
   isFeatured?: boolean;
+  isHot?: boolean;
+  isDeal?: boolean;
+  isOffer?: boolean;
+  isNewArrival?: boolean;
 }
 
 export type SortOption = 'latest' | 'price-asc' | 'price-desc';

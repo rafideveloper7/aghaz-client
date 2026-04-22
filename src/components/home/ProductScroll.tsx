@@ -1,17 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useFeaturedProducts } from '@/hooks/useProducts';
+import { useFeaturedProducts, useHotProducts, useDealProducts, useOfferProducts, useNewArrivalProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
 import Link from 'next/link';
 import { FiArrowRight } from 'react-icons/fi';
+
+export type ProductFilterType = 'featured' | 'hot' | 'deal' | 'offer' | 'newArrival';
 
 interface ProductScrollProps {
   title: string;
   subtitle?: string;
   viewAllHref?: string;
   limit?: number;
+  filterType?: ProductFilterType;
+}
+
+function useProductFilter(filterType: ProductFilterType | undefined, limit: number) {
+  const { data: featuredData, isLoading: featuredLoading } = useFeaturedProducts(limit);
+  const { data: hotData, isLoading: hotLoading } = useHotProducts(limit);
+  const { data: dealData, isLoading: dealLoading } = useDealProducts(limit);
+  const { data: offerData, isLoading: offerLoading } = useOfferProducts(limit);
+  const { data: newArrivalData, isLoading: newArrivalLoading } = useNewArrivalProducts(limit);
+
+  switch (filterType) {
+    case 'hot':
+      return { data: hotData, isLoading: hotLoading };
+    case 'deal':
+      return { data: dealData, isLoading: dealLoading };
+    case 'offer':
+      return { data: offerData, isLoading: offerLoading };
+    case 'newArrival':
+      return { data: newArrivalData, isLoading: newArrivalLoading };
+    default:
+      return { data: featuredData, isLoading: featuredLoading };
+  }
 }
 
 export function ProductScroll({
@@ -19,8 +43,9 @@ export function ProductScroll({
   subtitle,
   viewAllHref,
   limit = 10,
+  filterType = 'featured',
 }: ProductScrollProps) {
-  const { data: products, isLoading } = useFeaturedProducts(limit);
+  const { data: products, isLoading } = useProductFilter(filterType, limit);
 
   return (
     <section className="py-8 md:py-12">
@@ -46,11 +71,9 @@ export function ProductScroll({
         </div>
 
         {isLoading ? (
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="min-w-[calc(33.333%-8px)] md:min-w-[calc(25%-9px)]">
-                <ProductCardSkeleton />
-              </div>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {Array.from({ length: limit }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
             ))}
           </div>
         ) : products && products.length > 0 ? (
@@ -58,16 +81,14 @@ export function ProductScroll({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
           >
             {products.map((product, index) => (
               <motion.div
                 key={product._id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="min-w-[calc(33.333%-8px)] md:min-w-[calc(25%-9px)] lg:min-w-[calc(20%-12px)]"
               >
                 <ProductCard product={product} />
               </motion.div>

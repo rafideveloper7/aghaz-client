@@ -77,6 +77,34 @@ export const productsApi = {
     });
     return data as PaginatedResponse<Product>;
   },
+
+  getHot: async (limit = 10): Promise<PaginatedResponse<Product>> => {
+    const { data } = await api.get<ApiResponse>('/api/products', {
+      params: { isHot: true, limit },
+    });
+    return data as PaginatedResponse<Product>;
+  },
+
+  getDeals: async (limit = 10): Promise<PaginatedResponse<Product>> => {
+    const { data } = await api.get<ApiResponse>('/api/products', {
+      params: { isDeal: true, limit },
+    });
+    return data as PaginatedResponse<Product>;
+  },
+
+  getOffers: async (limit = 10): Promise<PaginatedResponse<Product>> => {
+    const { data } = await api.get<ApiResponse>('/api/products', {
+      params: { isOffer: true, limit },
+    });
+    return data as PaginatedResponse<Product>;
+  },
+
+  getNewArrivals: async (limit = 10): Promise<PaginatedResponse<Product>> => {
+    const { data } = await api.get<ApiResponse>('/api/products', {
+      params: { isNewArrival: true, limit },
+    });
+    return data as PaginatedResponse<Product>;
+  },
 };
 
 export const categoriesApi = {

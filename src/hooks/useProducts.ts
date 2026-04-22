@@ -13,6 +13,10 @@ export function useProducts(params: ProductsQueryParams = {}) {
       search: params.search,
       sort: params.sort,
       isFeatured: params.isFeatured,
+      isHot: params.isHot,
+      isDeal: params.isDeal,
+      isOffer: params.isOffer,
+      isNewArrival: params.isNewArrival,
     }),
     select: (data) => ({
       products: data.data,
@@ -34,6 +38,10 @@ export function useInfiniteProducts(params: Omit<ProductsQueryParams, 'page'> = 
         search: params.search,
         sort: params.sort,
         isFeatured: params.isFeatured,
+        isHot: params.isHot,
+        isDeal: params.isDeal,
+        isOffer: params.isOffer,
+        isNewArrival: params.isNewArrival,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -65,6 +73,46 @@ export function useFeaturedProducts(limit = 10) {
   return useQuery({
     queryKey: ['featured-products', limit],
     queryFn: () => productsApi.getFeatured(limit),
+    select: (data) => data.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useHotProducts(limit = 10) {
+  return useQuery({
+    queryKey: ['hot-products', limit],
+    queryFn: () => productsApi.getHot(limit),
+    select: (data) => data.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useDealProducts(limit = 10) {
+  return useQuery({
+    queryKey: ['deal-products', limit],
+    queryFn: () => productsApi.getDeals(limit),
+    select: (data) => data.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useOfferProducts(limit = 10) {
+  return useQuery({
+    queryKey: ['offer-products', limit],
+    queryFn: () => productsApi.getOffers(limit),
+    select: (data) => data.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useNewArrivalProducts(limit = 10) {
+  return useQuery({
+    queryKey: ['new-arrival-products', limit],
+    queryFn: () => productsApi.getNewArrivals(limit),
     select: (data) => data.data,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

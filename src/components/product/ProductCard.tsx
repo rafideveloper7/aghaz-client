@@ -104,7 +104,7 @@ export function ProductCard({ product }: ProductCardProps) {
               aria-label={`Buy ${product.title} now`}
             >
               <FiZap size={14} />
-              <span className="hidden md:inline">Buy</span>
+              <span className=" md:inline">Buy</span>
             </button>
             <button
               onClick={handleAddToCart}

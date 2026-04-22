@@ -29,15 +29,15 @@ export function CategorySection() {
   }
 
   return (
-    <section className="py-12 md:py-16">
+    <section className="py-2 md:py-6 text-center">
       <div className="mx-auto max-w-7xl px-4 mb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.1 }}
         >
-          <h2 className="text-2xl font-black text-text-primary md:text-3xl">
+          <h2 className="text-2xl font-black text-text-primary md:text-3xl ">
             Shop by Category
           </h2>
           <p className="mt-2 text-sm text-text-secondary">
@@ -58,7 +58,7 @@ export function CategorySection() {
               x: [0, -50 * (categories?.length || 1)]
             }}
             transition={{
-              duration: 15, // Fixed faster speed (lower = faster)
+              duration: 5, // Fixed faster speed (lower = faster)
               repeat: Infinity,
               ease: 'linear'
             }}
