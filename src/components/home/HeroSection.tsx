@@ -238,7 +238,7 @@ export function HeroSection() {
                       className="font-display font-black leading-tight"
                       style={{ 
                         color: slide.titleColor || '#ffffff',
-                        fontSize: `${Math.max(28, slide.titleFontSize * 0.7)}px`
+                        fontSize: `${Math.max(28, (slide.titleFontSize || 52) * 0.7)}px`
                       }}
                     >
                       {slide.mobileTitle || slide.title}
@@ -248,7 +248,7 @@ export function HeroSection() {
                         className="mt-3 max-w-lg leading-6"
                         style={{ 
                           color: slide.subtitleColor || '#ffffffc4',
-                          fontSize: `${Math.max(14, slide.subtitleFontSize * 0.8)}px`
+                          fontSize: `${Math.max(14, (slide.subtitleFontSize || 16) * 0.8)}px`
                         }}
                       >
                         {slide.mobileSubtitle || slide.subtitle}
