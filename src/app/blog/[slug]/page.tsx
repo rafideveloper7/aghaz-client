@@ -21,26 +21,24 @@ import { useBlog, useIncrementLike } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
 import type { Blog } from '@/types';
+import { useParams } from 'next/navigation';
 
-interface BlogDetailPageProps {
-  params: Promise<{ slug: string }>;
-}
-
-export default function BlogDetailPage({ params }: BlogDetailPageProps) {
-  const [slug, setSlug] = useState<string>('');
+export default function BlogDetailPage() {
+  const { slug } = useParams<{ slug: string }>();
   const [liked, setLiked] = useState(false);
+
   const { data: blogData, isLoading, error } = useBlog(slug);
   const { data: categoriesData } = useCategories();
   const incrementLikeMutation = useIncrementLike();
 
-  useEffect(() => {
-    params.then((resolvedParams) => {
-      setSlug(resolvedParams.slug);
-    });
-  }, [params]);
-
   const blog = blogData as Blog | undefined;
   const categories = categoriesData || [];
+
+  useEffect(() => {
+    if (!blog && !isLoading && error) {
+      // Blog not found - will show not found UI below
+    }
+  }, [blog, isLoading, error]);
 
   const handleLike = async () => {
     if (!blog || liked) return;
@@ -55,23 +53,6 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareText = blog?.title || 'Check out this blog post';
 
-  if (!slug) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4" />
-            <div className="h-64 bg-gray-200 rounded-xl" />
-            <div className="space-y-3">
-              <div className="h-8 bg-gray-200 rounded w-3/4" />
-              <div className="h-4 bg-gray-200 rounded w-1/2" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -82,6 +63,11 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
             <div className="space-y-3">
               <div className="h-8 bg-gray-200 rounded w-3/4" />
               <div className="h-4 bg-gray-200 rounded w-1/2" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-4 bg-gray-200 rounded w-2/3" />
             </div>
           </div>
         </div>
@@ -111,6 +97,7 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header Image */}
       {blog.featuredImage && (
         <div className="relative h-64 md:h-96 overflow-hidden">
           <Image
@@ -141,6 +128,7 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
 
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
+          {/* Meta Info */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-8 pb-8 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <FiCalendar className="h-4 w-4" />
@@ -178,6 +166,7 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
             )}
           </div>
 
+          {/* Tags */}
           {blog.tags && blog.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
               {blog.tags.map((tag, i) => (
@@ -193,6 +182,7 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
             </div>
           )}
 
+          {/* Blog Content */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -201,6 +191,66 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
             dangerouslySetInnerHTML={{ __html: blog.content }}
           />
 
+          {/* Action Links (Custom CTAs) */}
+          {blog.customLinks && blog.customLinks.length > 0 && (
+            <div className="mt-12 mb-12">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Related Actions</h3>
+              <div className="flex flex-wrap gap-3">
+                {blog.customLinks.map((link, idx) => (
+                  link.isButton ? (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                        link.style === 'primary'
+                          ? 'bg-primary-600 text-white hover:bg-primary-700'
+                          : link.style === 'secondary'
+                          ? 'bg-gray-800 text-white hover:bg-gray-900'
+                          : link.style === 'outline'
+                          ? 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50'
+                          : 'text-primary-600 hover:underline'
+                      }`}
+                    >
+                      {link.text}
+                    </a>
+                  ) : (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 hover:underline"
+                    >
+                      {link.text} →
+                    </a>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Gallery Images */}
+          {blog.gallery && blog.gallery.length > 0 && (
+            <div className="mt-12 mb-12">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Gallery</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {blog.gallery.map((img, idx) => (
+                  <div key={idx} className="relative aspect-video rounded-lg overflow-hidden">
+                    <Image
+                      src={img}
+                      alt={`${blog.title} gallery ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Share */}
           <div className="mt-12 pt-8 border-t border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Share this post</h3>
             <div className="flex flex-wrap gap-3">
