@@ -1,54 +1,3 @@
-i am getting these error in vercel deploey, see and fix 
-16:26:53.812 Running build in Washington, D.C., USA (East) – iad1
-16:26:53.813 Build machine configuration: 2 cores, 8 GB
-16:26:53.936 Cloning github.com/rafideveloper7/aghaz-client (Branch: main, Commit: 9c2b2ce)
-16:26:54.179 Cloning completed: 242.000ms
-16:26:54.917 Restored build cache from previous deployment (BCCsnaYNbNP8BVjfEoVLoq25zVi1)
-16:26:55.108 Running "vercel build"
-16:26:55.750 Vercel CLI 51.6.1
-16:26:56.184 Running "install" command: `npm install`...
-16:27:06.622 
-16:27:06.623 up to date, audited 436 packages in 10s
-16:27:06.624 
-16:27:06.624 163 packages are looking for funding
-16:27:06.624   run `npm fund` for details
-16:27:06.708 
-16:27:06.709 6 vulnerabilities (2 moderate, 4 high)
-16:27:06.709 
-16:27:06.709 To address issues that do not require attention, run:
-16:27:06.709   npm audit fix
-16:27:06.710 
-16:27:06.710 To address all issues (including breaking changes), run:
-16:27:06.710   npm audit fix --force
-16:27:06.710 
-16:27:06.710 Run `npm audit` for details.
-16:27:06.755 Detected Next.js version: 14.2.35
-16:27:06.755 Running "next build"
-16:27:07.391   ▲ Next.js 14.2.35
-16:27:07.392 
-16:27:07.406    Creating an optimized production build ...
-16:27:17.695  ✓ Compiled successfully
-16:27:17.698    Linting and checking validity of types ...
-16:27:23.918 Failed to compile.
-16:27:23.918 
-16:27:23.919 ./src/app/blog/[slug]/page.tsx:28:26
-16:27:23.920 Type error: Conversion of type 'Promise<{ slug: string; }>' to type '{ slug: string; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-16:27:23.920   Property 'slug' is missing in type 'Promise<{ slug: string; }>' but required in type '{ slug: string; }'.
-16:27:23.920 
-16:27:23.920 [0m [90m 26 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mBlogDetailPage[39m({ params }[33m:[39m { params[33m:[39m [33mPromise[39m[33m<[39m{ slug[33m:[39m string }[33m>[39m }) {[0m
-16:27:23.920 [0m [90m 27 |[39m   [36mconst[39m [liked[33m,[39m setLiked] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
-16:27:23.920 [0m[31m[1m>[22m[39m[90m 28 |[39m   [36mconst[39m resolvedParams [33m=[39m useState(params)[[35m0[39m] [36mas[39m { slug[33m:[39m string }[33m;[39m[0m
-16:27:23.921 [0m [90m    |[39m                          [31m[1m^[22m[39m[0m
-16:27:23.921 [0m [90m 29 |[39m   [36mconst[39m slug [33m=[39m resolvedParams[33m.[39mslug[33m;[39m[0m
-16:27:23.921 [0m [90m 30 |[39m[0m
-16:27:23.922 [0m [90m 31 |[39m   [36mconst[39m { data[33m:[39m blogData[33m,[39m isLoading[33m,[39m error } [33m=[39m useBlog(slug)[33m;[39m[0m
-16:27:23.955 Next.js build worker exited with code: 1 and signal: null
-16:27:23.973 Error: Command "next build" exited with 1 
-
-
-------------------
-
-this it the file
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,17 +23,23 @@ import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
 import type { Blog } from '@/types';
 
-export default function BlogDetailPage() {
-  'use client';
-  
-  const [liked, setLiked] = useState(false);
-  const slug = typeof window !== 'undefined' 
-    ? (window as any).__router?.params?.slug 
-    : '';
+interface BlogDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
 
+export default function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const [slug, setSlug] = useState<string>('');
+  const [liked, setLiked] = useState(false);
   const { data: blogData, isLoading, error } = useBlog(slug);
   const { data: categoriesData } = useCategories();
   const incrementLikeMutation = useIncrementLike();
+
+  // Resolve params promise
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setSlug(resolvedParams.slug);
+    });
+  }, [params]);
 
   const blog = blogData as Blog | undefined;
   const categories = categoriesData || [];
@@ -107,6 +62,29 @@ export default function BlogDetailPage() {
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareText = blog?.title || 'Check out this blog post';
+
+  // Don't render anything until we have the slug
+  if (!slug) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-12">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-gray-200 rounded w-1/4" />
+            <div className="h-64 bg-gray-200 rounded-xl" />
+            <div className="space-y-3">
+              <div className="h-8 bg-gray-200 rounded w-3/4" />
+              <div className="h-4 bg-gray-200 rounded w-1/2" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-4 bg-gray-200 rounded w-2/3" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
