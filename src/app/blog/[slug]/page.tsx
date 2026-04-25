@@ -22,25 +22,27 @@ import { useBlog, useIncrementLike } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
 import type { Blog } from '@/types';
-import { useParams } from 'next/navigation';
 
 export default function BlogDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
+  'use client';
+  
   const [liked, setLiked] = useState(false);
-  // Fixed: Using useParams instead of useState on params
+  const slug = typeof window !== 'undefined' 
+    ? (window as any).__router?.params?.slug 
+    : '';
 
-    const { data: blogData, isLoading, error } = useBlog(slug);
-    const { data: categoriesData } = useCategories();
-    const incrementLikeMutation = useIncrementLike();
+  const { data: blogData, isLoading, error } = useBlog(slug);
+  const { data: categoriesData } = useCategories();
+  const incrementLikeMutation = useIncrementLike();
 
-    const blog = blogData as Blog | undefined;
-    const categories = categoriesData || [];
+  const blog = blogData as Blog | undefined;
+  const categories = categoriesData || [];
 
-   useEffect(() => {
-     if (!blog && !isLoading && error) {
-       // Blog not found - will show not found UI below
-     }
-   }, [blog, isLoading, error]);
+  useEffect(() => {
+    if (!blog && !isLoading && error) {
+      // Blog not found - will show not found UI below
+    }
+  }, [blog, isLoading, error]);
 
   const handleLike = async () => {
     if (!blog || liked) return;
@@ -127,7 +129,6 @@ export default function BlogDetailPage() {
           </div>
         </div>
       )}
-      
 
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
@@ -160,13 +161,13 @@ export default function BlogDetailPage() {
               </div>
             )}
             {blog.category && getCategoryName(blog.category) && (
-               <Link
-                 href={`/blog?category=${typeof blog.category === 'string' ? blog.category : blog.category._id}`}
-                 className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors"
-               >
-                 {getCategoryName(blog.category)}
-               </Link>
-             )}
+              <Link
+                href={`/blog?category=${typeof blog.category === 'string' ? blog.category : blog.category._id}`}
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors"
+              >
+                {getCategoryName(blog.category)}
+              </Link>
+            )}
           </div>
 
           {/* Tags */}
