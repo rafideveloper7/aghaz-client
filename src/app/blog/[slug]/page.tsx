@@ -22,11 +22,11 @@ import { useBlog, useIncrementLike } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
 import type { Blog } from '@/types';
+import { useParams } from 'next/navigation';
 
-export default function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function BlogDetailPage() {
+  const { slug } = useParams<{ slug: string }>();
   const [liked, setLiked] = useState(false);
-  const resolvedParams = useState(params)[0] as { slug: string };
-  const slug = resolvedParams.slug;
 
   const { data: blogData, isLoading, error } = useBlog(slug);
   const { data: categoriesData } = useCategories();
