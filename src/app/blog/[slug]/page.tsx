@@ -27,19 +27,20 @@ import { useParams } from 'next/navigation';
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [liked, setLiked] = useState(false);
+  // Fixed: Using useParams instead of useState on params
 
-  const { data: blogData, isLoading, error } = useBlog(slug);
-  const { data: categoriesData } = useCategories();
-  const incrementLikeMutation = useIncrementLike();
+    const { data: blogData, isLoading, error } = useBlog(slug);
+    const { data: categoriesData } = useCategories();
+    const incrementLikeMutation = useIncrementLike();
 
-  const blog = blogData?.data as Blog | undefined;
-  const categories = categoriesData?.data || [];
+    const blog = blogData as Blog | undefined;
+    const categories = categoriesData || [];
 
-  useEffect(() => {
-    if (!blog && !isLoading && error) {
-      // Blog not found - will show not found UI below
-    }
-  }, [blog, isLoading, error]);
+   useEffect(() => {
+     if (!blog && !isLoading && error) {
+       // Blog not found - will show not found UI below
+     }
+   }, [blog, isLoading, error]);
 
   const handleLike = async () => {
     if (!blog || liked) return;
@@ -157,14 +158,14 @@ export default function BlogDetailPage() {
                 <span>{blog.author.name}</span>
               </div>
             )}
-            {getCategoryName(blog.category) && (
-              <Link
-                href={`/blog?category=${typeof blog.category === 'string' ? blog.category : blog.category._id}`}
-                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors"
-              >
-                {getCategoryName(blog.category)}
-              </Link>
-            )}
+            {blog.category && getCategoryName(blog.category) && (
+               <Link
+                 href={`/blog?category=${typeof blog.category === 'string' ? blog.category : blog.category._id}`}
+                 className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors"
+               >
+                 {getCategoryName(blog.category)}
+               </Link>
+             )}
           </div>
 
           {/* Tags */}
