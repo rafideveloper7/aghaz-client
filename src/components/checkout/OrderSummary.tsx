@@ -45,10 +45,7 @@ export function OrderSummary({ variant = 'sidebar' }: OrderSummaryProps) {
           <span>Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'items'})</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-text-secondary">
-          <span>Delivery</span>
-          <span>{formatPrice(deliveryFee)}</span>
-        </div>
+        
         <div className="flex justify-between border-t border-gray-100 pt-2 text-base font-bold text-text-primary md:text-lg md:pt-3">
           <span>Total</span>
           <span>{formatPrice(total)}</span>

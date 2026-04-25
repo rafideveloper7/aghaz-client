@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from './constants';
 import toast from 'react-hot-toast';
-import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse, SiteSettings, ContactMessagePayload, Review } from '@/types';
+import type { Product, Category, ProductsResponse, ProductsQueryParams, OrderPayload, OrderResponse, ApiResponse, SiteSettings, ContactMessagePayload, Review, Blog, BlogsQueryParams } from '@/types';
 
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -169,6 +169,37 @@ export const uploadApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return data.data as { url: string };
+  },
+};
+
+export const blogsApi = {
+  getAll: async (params: BlogsQueryParams = {}): Promise<PaginatedResponse<Blog>> => {
+    const { data } = await api.get<ApiResponse>('/api/blogs', { params });
+    return data as PaginatedResponse<Blog>;
+  },
+
+  getBySlug: async (slug: string) => {
+    const { data } = await api.get<ApiResponse>(`/api/blogs/${slug}`);
+    return data as { success: boolean; message: string; data: Blog };
+  },
+
+  getFeatured: async (limit = 5): Promise<PaginatedResponse<Blog>> => {
+    const { data } = await api.get<ApiResponse>('/api/blogs/featured', {
+      params: { limit },
+    });
+    return data as PaginatedResponse<Blog>;
+  },
+
+  getRecent: async (limit = 5): Promise<PaginatedResponse<Blog>> => {
+    const { data } = await api.get<ApiResponse>('/api/blogs/recent', {
+      params: { limit },
+    });
+    return data as PaginatedResponse<Blog>;
+  },
+
+  incrementLike: async (id: string) => {
+    const { data } = await api.post<ApiResponse<{ likeCount: number }>>(`/api/blogs/${id}/like`);
+    return data as { success: boolean; message: string; data: { likeCount: number } };
   },
 };
 

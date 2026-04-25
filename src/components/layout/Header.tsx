@@ -23,6 +23,7 @@ import { useCategories } from "@/hooks/useCategories";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/blog", label: "Blog" },
 ];
 
 interface SiteLogo {

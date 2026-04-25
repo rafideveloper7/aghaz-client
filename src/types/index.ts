@@ -259,3 +259,63 @@ export const CATEGORIES = [
 ] as const;
 
 export type CategoryName = (typeof CATEGORIES)[number];
+
+export interface BlogAuthor {
+  name: string;
+  image?: string;
+  adminId?: string;
+}
+
+export interface BlogCustomLink {
+  text: string;
+  url: string;
+  style: 'primary' | 'secondary' | 'outline' | 'link';
+  isButton: boolean;
+}
+
+export interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featuredImage: string;
+  gallery: string[];
+  author: BlogAuthor;
+  tags: string[];
+  category?: string | Category;
+  isPublished: boolean;
+  isFeatured: boolean;
+  publishedAt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  customLinks: BlogCustomLink[];
+  viewCount: number;
+  likeCount: number;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogsQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+  tag?: string;
+  sort?: 'newest' | 'popular' | 'mostLiked' | 'titleAsc' | 'titleDesc';
+  featured?: boolean;
+  status?: string;
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean;
+  message: string;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
