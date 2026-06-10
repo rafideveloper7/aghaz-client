@@ -19,7 +19,7 @@ export default function BlogPage() {
   const [tag, setTag] = useState('');
   const [sort, setSort] = useState('newest');
 
-  // FIX: useBlogs returns { blogs, pagination } directly, not wrapped in data
+  // useBlogs returns { blogs, pagination } directly
   const { data: blogsData, isLoading } = useBlogs({
     page,
     limit,
@@ -30,13 +30,13 @@ export default function BlogPage() {
     status: 'published',
   });
   
-  const { data: categoriesData } = useCategories();
+  // useCategories returns categories array directly (not wrapped in data)
+  const { data: categories } = useCategories();
 
-  // FIX: blogsData has blogs property directly, not blogsData.data
   const blogs = blogsData?.blogs || [];
   const pagination = blogsData?.pagination;
-  // FIX: categoriesData has data property (different structure)
-  const categories = categoriesData?.data || [];
+  // categories is already an array, no need for .data
+  const categoriesList = Array.isArray(categories) ? categories : [];
 
   // Extract all unique tags from blogs
   const allTags = Array.from(
@@ -229,7 +229,7 @@ export default function BlogPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-6 space-y-6">
               {/* Categories */}
-              {categories.length > 0 && (
+              {categoriesList.length > 0 && (
                 <div className="card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
                   <div className="space-y-2">
@@ -241,7 +241,7 @@ export default function BlogPage() {
                     >
                       All Categories
                     </button>
-                    {categories.map(cat => (
+                    {categoriesList.map((cat: any) => (
                       <button
                         key={cat._id}
                         onClick={() => { setCategory(cat._id); setPage(1); }}
