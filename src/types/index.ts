@@ -306,6 +306,7 @@ export interface BlogsQueryParams {
   sort?: 'newest' | 'popular' | 'mostLiked' | 'titleAsc' | 'titleDesc';
   featured?: boolean;
   status?: string;
+  published?: boolean;
 }
 
 export interface PaginatedResponse<T> {

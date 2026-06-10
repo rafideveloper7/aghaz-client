@@ -9,7 +9,7 @@ import { FiCalendar, FiEye, FiTag, FiSearch } from 'react-icons/fi';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
-import type { Blog } from '@/types';
+import type { Blog, BlogsQueryParams } from '@/types';
 
 export default function BlogPage() {
   const [page, setPage] = useState(1);
@@ -17,7 +17,7 @@ export default function BlogPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [tag, setTag] = useState('');
-  const [sort, setSort] = useState('newest');
+  const [sort, setSort] = useState<BlogsQueryParams['sort']>('newest');
 
   // useBlogs returns { blogs, pagination }
   const { data: blogsData, isLoading } = useBlogs({

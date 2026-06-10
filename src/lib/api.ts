@@ -198,7 +198,7 @@ export const blogsApi = {
   },
 
   incrementLike: async (id: string) => {
-    const { data } = await api.post<ApiResponse<{ likeCount: number }>>(`/api/blogs/${id}/like`);
+    const { data } = await api.post<ApiResponse>(`/api/blogs/${id}/like`);
     return data as { success: boolean; message: string; data: { likeCount: number } };
   },
 };

@@ -1,31 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { blogsApi } from '@/lib/api';
-import type { Blog } from '@/types';
+import type { Blog, BlogsQueryParams } from '@/types';
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 
-export function useBlogs(params: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  category?: string;
-  tag?: string;
-  sort?: string;
-  featured?: boolean;
-  status?: string;
-} = {}) {
+export function useBlogs(params?: BlogsQueryParams) {
   return useQuery({
     queryKey: ['blogs', params],
     queryFn: () => blogsApi.getAll({
-      page: params.page || 1,
-      limit: params.limit || DEFAULT_PAGE_SIZE,
-      search: params.search,
-      category: params.category,
-      tag: params.tag,
-      sort: params.sort,
-      featured: params.featured,
-      status: params.status,
+      page: params?.page || 1,
+      limit: params?.limit || DEFAULT_PAGE_SIZE,
+      search: params?.search,
+      category: params?.category,
+      tag: params?.tag,
+      sort: params?.sort,
+      featured: params?.featured,
+      status: params?.status,
       published: true, // Always get published blogs on client
     }),
+    enabled: !!params,
     select: (data) => ({
       blogs: data.data,
       pagination: data.pagination,
