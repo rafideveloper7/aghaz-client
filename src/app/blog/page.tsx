@@ -1,11 +1,11 @@
 // src/app/blog/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FiCalendar, FiEye, FiHeart, FiTag, FiSearch } from 'react-icons/fi';
+import { FiCalendar, FiEye, FiTag, FiSearch } from 'react-icons/fi';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
 import { formatDate } from '@/lib/utils';
@@ -19,7 +19,7 @@ export default function BlogPage() {
   const [tag, setTag] = useState('');
   const [sort, setSort] = useState('newest');
 
-  // useBlogs returns { blogs, pagination } directly
+  // useBlogs returns { blogs, pagination }
   const { data: blogsData, isLoading } = useBlogs({
     page,
     limit,
@@ -30,13 +30,13 @@ export default function BlogPage() {
     status: 'published',
   });
   
-  // useCategories returns categories array directly (not wrapped in data)
+  // useCategories returns categories array directly (no .data wrapper)
   const { data: categories } = useCategories();
 
   const blogs = blogsData?.blogs || [];
   const pagination = blogsData?.pagination;
-  // categories is already an array, no need for .data
-  const categoriesList = Array.isArray(categories) ? categories : [];
+  // categories is already an array from the select function
+  const categoriesList = categories || [];
 
   // Extract all unique tags from blogs
   const allTags = Array.from(
