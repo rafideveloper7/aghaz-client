@@ -19,7 +19,7 @@ export default function BlogPage() {
   const [tag, setTag] = useState('');
   const [sort, setSort] = useState('newest');
 
-  // FIX: Use 'status' instead of 'published'
+  // FIX: useBlogs returns { blogs, pagination } directly, not wrapped in data
   const { data: blogsData, isLoading } = useBlogs({
     page,
     limit,
@@ -27,13 +27,15 @@ export default function BlogPage() {
     category,
     tag,
     sort,
-    status: 'published', // Changed from 'published: true' to 'status: "published"'
+    status: 'published',
   });
   
   const { data: categoriesData } = useCategories();
 
-  const blogs = blogsData?.data || [];
+  // FIX: blogsData has blogs property directly, not blogsData.data
+  const blogs = blogsData?.blogs || [];
   const pagination = blogsData?.pagination;
+  // FIX: categoriesData has data property (different structure)
   const categories = categoriesData?.data || [];
 
   // Extract all unique tags from blogs
@@ -291,7 +293,7 @@ export default function BlogPage() {
 
 function FeaturedBlogWidget() {
   const { data: featuredData } = useBlogs({ limit: 1, featured: true, sort: 'newest', status: 'published' });
-  const featuredBlog = featuredData?.data?.[0];
+  const featuredBlog = featuredData?.blogs?.[0];
 
   if (!featuredBlog) {
     return <p className="text-gray-500 text-sm">No featured blog yet</p>;
