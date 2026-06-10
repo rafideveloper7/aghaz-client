@@ -1,3 +1,4 @@
+// src/app/blog/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,6 +19,7 @@ export default function BlogPage() {
   const [tag, setTag] = useState('');
   const [sort, setSort] = useState('newest');
 
+  // FIX: Use 'status' instead of 'published'
   const { data: blogsData, isLoading } = useBlogs({
     page,
     limit,
@@ -25,8 +27,9 @@ export default function BlogPage() {
     category,
     tag,
     sort,
-    published: true,
+    status: 'published', // Changed from 'published: true' to 'status: "published"'
   });
+  
   const { data: categoriesData } = useCategories();
 
   const blogs = blogsData?.data || [];
@@ -157,7 +160,7 @@ export default function BlogPage() {
                         </time>
                         <span className="mx-1">•</span>
                         <FiEye className="h-4 w-4" />
-                        <span>{blog.viewCount.toLocaleString()} views</span>
+                        <span>{blog.viewCount?.toLocaleString() || 0} views</span>
                       </div>
 
                       <Link href={`/blog/${blog.slug}`}>
@@ -256,17 +259,17 @@ export default function BlogPage() {
                 <div className="card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {allTags.map((tag, i) => (
+                    {allTags.map((t, i) => (
                       <button
                         key={i}
-                        onClick={() => { setTag(tag); setPage(1); }}
+                        onClick={() => { setTag(t); setPage(1); }}
                         className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                          tag === tag
+                          tag === t
                             ? 'bg-primary-600 text-white'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
-                        {tag}
+                        {t}
                       </button>
                     ))}
                   </div>
@@ -287,7 +290,7 @@ export default function BlogPage() {
 }
 
 function FeaturedBlogWidget() {
-  const { data: featuredData } = useBlogs({ limit: 1, featured: true, sort: 'newest' });
+  const { data: featuredData } = useBlogs({ limit: 1, featured: true, sort: 'newest', status: 'published' });
   const featuredBlog = featuredData?.data?.[0];
 
   if (!featuredBlog) {
@@ -313,7 +316,7 @@ function FeaturedBlogWidget() {
       <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
         {featuredBlog.title}
       </h4>
-      <p className="text-xs text-gray-500 mt-1">{formatDate(featuredBlog.publishedAt)}</p>
+      <p className="text-xs text-gray-500 mt-1">{formatDate(featuredBlog.publishedAt || featuredBlog.createdAt)}</p>
     </Link>
   );
 }
