@@ -34,8 +34,7 @@ interface SiteLogo {
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const getItemCount = useCartStore((state) => state.getItemCount);
-  const cartCount = getItemCount();
+  const cartCount = useCartStore((state) => state.getItemCount());
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);

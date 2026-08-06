@@ -44,7 +44,14 @@ export function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!inStock) return;
-    router.push('/checkout');
+    addItem({
+      product: product._id,
+      title: product.title,
+      price: product.price,
+      image: product.images[0] || '',
+    });
+    toast.success('Added to cart');
+    router.push('/cart');
   };
 
   return (
