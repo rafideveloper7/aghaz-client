@@ -127,8 +127,19 @@ export function Header() {
               href="/"
               className="flex items-center gap-3 flex-shrink-0 mr-1"
             >
-              <LogoContent />
-              <h2 className="text-lg font-bold text-gray-900">Aghaz</h2>
+              <Image
+                src="https://res.cloudinary.com/dcdacxtip/image/upload/v1777478777/aghaz/products/1777478777858-1000091274.png.png"
+                alt="Aghaz Logo"
+                width={settings?.logoWidth || 32}
+                height={36}
+                className="object-contain h-9 w-auto"
+                unoptimized
+                onError={() => {
+                  console.warn("Logo failed to load:", logoUrl);
+                  setLogoError(true);
+                }}
+              />
+              <h2 className="text-lg font-bold text-gray-900"></h2>
             </Link>
 
             {/* Mobile Search - Visible on all screen sizes */}
