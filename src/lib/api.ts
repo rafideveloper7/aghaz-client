@@ -119,6 +119,10 @@ export const ordersApi = {
     const { data } = await api.post<ApiResponse>('/api/orders', payload);
     return data.data as OrderResponse;
   },
+  submitManualPayment: async (orderId: string, data: { transactionId?: string; screenshotUrl?: string }) => {
+    const { data: res } = await api.post<ApiResponse>(`/api/orders/${orderId}/payment`, data);
+    return res.data as OrderResponse;
+  },
 };
 
 export const settingsApi = {
@@ -155,7 +159,7 @@ export const uploadReviewApi = {
     const formData = new FormData();
     formData.append('image', file);
     const { data } = await api.post<ApiResponse>('/api/upload/review-image', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined as any },
     });
     return data.data as { url: string; fileId: string };
   },
@@ -166,7 +170,7 @@ export const uploadApi = {
     const formData = new FormData();
     formData.append('image', file);
     const { data } = await api.post<ApiResponse>('/api/upload/payment-proof', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined as any },
     });
     return data.data as { url: string };
   },

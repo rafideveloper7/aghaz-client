@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { getWhatsAppUrl } from '@/lib/utils';
+import { getWhatsAppUrl, formatPrice } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { FiCheck, FiShoppingBag } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -13,6 +13,7 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 export default function OrderSuccessPage() {
   const [orderNumber, setOrderNumber] = useState('');
   const [latestOrder, setLatestOrder] = useState<OrderResponse | null>(null);
+  const [paymentState, setPaymentState] = useState<'loading' | 'success'>('loading');
   const { data: settings } = useSiteSettings();
 
   useEffect(() => {
@@ -21,11 +22,13 @@ export default function OrderSuccessPage() {
     if (fromQuery) {
       setOrderNumber(fromQuery.startsWith('undefined') ? '' : fromQuery);
       sessionStorage.removeItem('latest-order');
+      setPaymentState('success');
       return;
     }
 
     const storedOrder = sessionStorage.getItem('latest-order');
     if (!storedOrder) {
+      setPaymentState('success');
       return;
     }
 
@@ -39,6 +42,7 @@ export default function OrderSuccessPage() {
       // Ignore invalid cached order data
     } finally {
       sessionStorage.removeItem('latest-order');
+      setPaymentState('success');
     }
   }, []);
 
@@ -50,7 +54,6 @@ export default function OrderSuccessPage() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-lg text-center"
       >
-        {/* Success Animation */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -101,10 +104,24 @@ export default function OrderSuccessPage() {
             <p className="mt-1 text-xs text-slate-600">
               {latestOrder.paymentMethod.type === 'cod'
                 ? 'Payment will be collected on delivery.'
-                : latestOrder.paymentDetails?.paymentReference
-                  ? `Reference received: ${latestOrder.paymentDetails.paymentReference}. Our team will verify it shortly.`
-                  : 'Your payment will be reviewed by our team shortly.'}
+                : latestOrder.paymentStatus === 'pending_verification'
+                  ? 'Payment submitted. Our team will verify it shortly.'
+                  : latestOrder.paymentStatus === 'paid'
+                    ? 'Payment verified successfully.'
+                    : latestOrder.paymentStatus === 'rejected'
+                      ? 'Payment was rejected. Please contact support.'
+                      : 'Your payment will be reviewed by our team shortly.'}
             </p>
+            {latestOrder.paymentMethod.type === 'easypaisa' && (
+              <div className="mt-2 space-y-1 text-xs text-slate-600">
+                {latestOrder.paymentDetails?.paymentReference && (
+                  <p>Transaction ID: {latestOrder.paymentDetails.paymentReference}</p>
+                )}
+                {latestOrder.paymentDetails?.paymentProofUrl && (
+                  <p>Payment Screenshot: Submitted</p>
+                )}
+              </div>
+            )}
           </motion.div>
         )}
 

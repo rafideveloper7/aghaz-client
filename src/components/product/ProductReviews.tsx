@@ -26,21 +26,22 @@ interface ProductReviewsProps {
 
 function StarRating({ rating, size = 16, onClick, interactive = false }: { rating: number; size?: number; onClick?: (rating: number) => void; interactive?: boolean }) {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
           onClick={() => onClick?.(star)}
           className={cn(
-            'transition-transform',
-            interactive && 'cursor-pointer hover:scale-110'
+            'transition-transform duration-150',
+            interactive && 'cursor-pointer hover:scale-120 active:scale-95'
           )}
         >
           <FiStar
             size={size}
             className={cn(
-              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
+              'transition-colors duration-150',
+              star <= rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200',
               interactive && star === rating && 'drop-shadow-sm'
             )}
           />
@@ -125,9 +126,8 @@ export function ProductReviews({ productId, productTitle }: ProductReviewsProps)
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image must be less than 5MB');
-        return;
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Image is larger than 10MB — upload may be slow', { id: 'size-warn' });
       }
       setFormData(prev => ({ ...prev, image: file }));
       const reader = new FileReader();
@@ -138,7 +138,6 @@ export function ProductReviews({ productId, productTitle }: ProductReviewsProps)
 
   const visibleReviews = showAll ? reviews : reviews.slice(0, 3);
 
-  // Show message if reviews are disabled (after settings loaded)
   if (settings && settings.reviewsEnabled === false) {
     return (
       <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center">
@@ -152,218 +151,148 @@ export function ProductReviews({ productId, productTitle }: ProductReviewsProps)
     <div className="rounded-2xl border border-gray-100 bg-white p-4 md:p-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-lg font-bold text-text-primary">Customer Reviews</h3>
+          <h3 className="text-lg font-bold text-gray-900">Customer Reviews</h3>
           {totalReviews > 0 && (
             <div className="mt-1 flex items-center gap-2">
               <StarRating rating={Math.round(averageRating)} />
-              <span className="text-sm font-semibold text-text-primary">{averageRating.toFixed(1)}</span>
-              <span className="text-sm text-text-secondary">({totalReviews} {totalReviews === 1 ? 'review' : 'reviews'})</span>
+              <span className="text-sm font-semibold text-gray-900">{averageRating.toFixed(1)}</span>
+              <span className="text-sm text-gray-500">({totalReviews} {totalReviews === 1 ? 'review' : 'reviews'})</span>
             </div>
           )}
         </div>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="btn-secondary w-full sm:w-auto">
+          <button
+            onClick={() => setShowForm(true)}
+            className="
+              btn-secondary 
+              relative 
+              z-10 
+              w-full 
+              sm:w-auto 
+              border-4 
+              border-orange-400 
+              rounded-[8px] 
+              p-2 
+              font-semibold
+              text-orange-500
+              overflow-hidden 
+              transition-colors 
+              duration-500 
+              hover:text-white
+
+              after:absolute 
+              after:left-[-50%] 
+              after:top-[100%] 
+              after:-z-10 
+              after:h-[200px] 
+              after:w-[200%] 
+              after:aspect-square
+              after:rounded-[40%] 
+              after:bg-orange-400 
+              after:transition-[top] 
+              after:duration-700 
+              after:ease-out
+              
+              hover:after:top-[-45px] 
+              hover:after:animate-[spin_4s_linear_infinite]
+            "
+          >
             Write a Review
           </button>
         )}
       </div>
 
-      {/* Review Form */}
+      {/* Modern Redesigned Review Form */}
       {showForm && (
         <motion.form
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit}
-          className="mb-8 rounded-xl border border-gray-200 bg-gray-50 p-4"
+          className="mb-8 rounded-2xl border border-gray-200/80 bg-white shadow-sm shadow-gray-100/50 p-5 md:p-6"
         >
-          <h4 className="font-semibold text-gray-900 mb-4">Write Your Review</h4>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your Rating *</label>
-            <StarRating rating={formData.rating} size={24} interactive onClick={(r) => setFormData(prev => ({ ...prev, rating: r }))} />
+          {/* Form Header */}
+          <div className="flex justify-between items-center pb-4 mb-5 border-b border-gray-100">
+            <div>
+              <h4 className="text-base font-bold text-gray-900">Write Your Review</h4>
+              <p className="text-xs text-gray-500 mt-0.5">Fields marked with * are required</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <FiX size={18} />
+            </button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          {/* Star Selection Area */}
+          <div className="mb-6 p-4 rounded-xl bg-orange-50/40 border border-orange-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
+              <label className="block text-sm font-semibold text-gray-800">Your Overall Rating *</label>
+              <p className="text-xs text-gray-500 mt-0.5">Tap a star to set your review rating score</p>
+            </div>
+            <div className="bg-white px-4 py-2.5 rounded-lg border border-orange-100 shadow-sm shadow-orange-100/20 w-fit">
+              <StarRating rating={formData.rating} size={26} interactive onClick={(r) => setFormData(prev => ({ ...prev, rating: r }))} />
+            </div>
+          </div>
+
+          {/* Name & Product Row */}
+          <div className="grid gap-4 sm:grid-cols-2 mb-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Your Name *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="input-field"
-                placeholder="Enter your name"
+                className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                placeholder="e.g. John Doe"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product
-                <span className="text-gray-400 text-xs ml-1">({productTitle || 'Auto-detected'})</span>
-              </label>
-              <input type="text" value={productTitle || ''} className="input-field bg-gray-100" disabled />
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Product</label>
+              <input
+                type="text"
+                value={productTitle || 'Auto-detected Product'}
+                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500 font-medium cursor-not-allowed"
+                disabled
+              />
             </div>
           </div>
 
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your Review *</label>
+          {/* Comment Area */}
+          <div className="mb-5">
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Your Review *</label>
             <textarea
               value={formData.comment}
               onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-              className="input-field min-h-24"
-              placeholder="Share your experience with this product..."
+              className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+              placeholder="Share your experience..."
+              rows={5}
               required
             />
           </div>
 
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <FiCamera className="inline mr-1" />
-              Add Photo (optional)
-            </label>
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <div className="h-20 w-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden hover:border-primary-400 transition-colors">
-                  {imagePreview ? (
-                    <Image src={imagePreview} alt="Preview" width={80} height={80} className="object-cover" />
-                  ) : (
-                    <FiUpload className="text-gray-400" />
-                  )}
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                <span className="text-xs text-gray-500">Click to upload</span>
-              </label>
-              {imagePreview && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImagePreview(null);
-                    setFormData(prev => ({ ...prev, image: null }));
-                  }}
-                  className="text-red-500 text-sm hover:underline flex items-center gap-1"
-                >
-                  <FiX size={14} /> Remove
-                </button>
-              )}
-            </div>
-            <p className="text-xs text-gray-400 mt-1">Max 5MB. JPG, PNG, WebP supported.</p>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <button type="submit" disabled={submitting} className="btn-primary flex items-center gap-2">
-              {submitting ? 'Submitting...' : <><FiCheck size={16} /> Submit Review</>}
-            </button>
+          {/* Form Actions */}
+          <div className="flex items-center justify-end gap-3">
             <button
               type="button"
-              onClick={() => {
-                setShowForm(false);
-                setFormData({ name: '', rating: 5, comment: '', image: null });
-                setImagePreview(null);
-              }}
-              className="btn-secondary"
+              onClick={() => setShowForm(false)}
+              className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
-          </div>
-        </motion.form>
-      )}
-
-      {/* Rating breakdown */}
-      {totalReviews > 0 && (
-        <div className="mb-6 flex gap-3">
-          {[5, 4, 3, 2, 1].map((star) => {
-            const percentage = reviews.filter(r => r.rating === star).length / totalReviews * 100;
-            return (
-              <div key={star} className="flex-1">
-                <div className="mb-1 flex items-center gap-1">
-                  <span className="text-xs text-text-secondary">{star}</span>
-                  <FiStar size={10} className="fill-yellow-400 text-yellow-400" />
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="h-full rounded-full bg-yellow-400 transition-all duration-500"
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Reviews List */}
-      <div className="space-y-4">
-        {visibleReviews.map((review, index) => (
-          <motion.div
-            key={review._id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="border-b border-gray-50 pb-4 last:border-0 last:pb-0"
-          >
-            <div className="mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-text-secondary">
-                  {review.name[0]?.toUpperCase()}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium text-text-primary">{review.name}</span>
-                    {review.verified && (
-                      <span className="rounded-full bg-primary-50 px-1.5 py-0.5 text-[10px] font-medium text-primary">Verified</span>
-                    )}
-                  </div>
-                  <StarRating rating={review.rating} size={12} />
-                </div>
-              </div>
-              <span className="text-xs text-text-secondary">
-                {new Date(review.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </span>
-            </div>
-            {review.image && (
-              <button
-                type="button"
-                onClick={() => setPreviewImage(review.image || null)}
-                className="h-16 w-16 rounded-lg overflow-hidden border border-gray-200 hover:opacity-80 transition-opacity"
-              >
-                <Image src={review.image} alt="Review" width={64} height={64} className="object-cover" />
-              </button>
-            )}
-            <p className="text-sm text-text-secondary whitespace-pre-wrap">{review.comment}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      {reviews.length > 3 && (
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="mt-4 w-full rounded-xl border border-gray-200 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:bg-gray-50"
-        >
-          {showAll ? 'Show Less' : `View All ${totalReviews} Reviews`}
-        </button>
-      )}
-
-      {/* Image Preview Modal */}
-      {previewImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setPreviewImage(null)}
-        >
-          <div className="relative max-w-3xl max-h-[90vh]">
             <button
-              type="button"
-              onClick={() => setPreviewImage(null)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300"
+              type="submit"
+              disabled={submitting}
+              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
             >
-              <FiX size={24} />
+              {submitting ? 'Submitting...' : 'Submit Review'}
             </button>
-            <Image src={previewImage} alt="Preview" width={800} height={800} className="max-w-full max-h-[90vh] object-contain rounded-lg" />
           </div>
-        </div>
+
+
+        </motion.form>
       )}
     </div>
   );

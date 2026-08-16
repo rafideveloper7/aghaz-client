@@ -67,7 +67,7 @@ export interface CartItem {
   image: string;
 }
 
-export type PaymentMethodType = 'cod' | 'wallet' | 'bank' | 'other';
+export type PaymentMethodType = 'cod' | 'easypaisa';
 
 export interface PaymentMethod {
   code: string;
@@ -76,6 +76,7 @@ export interface PaymentMethod {
   accountTitle?: string;
   accountNumber?: string;
   iban?: string;
+  qrCode?: string;
   instructions?: string;
   isActive: boolean;
   sortOrder: number;
@@ -119,9 +120,11 @@ export interface OrderResponse {
     accountNumber?: string;
     iban?: string;
     paymentReference?: string;
+    paymentProofUrl?: string;
   };
-  paymentStatus: 'unpaid' | 'awaiting_verification' | 'paid';
+  paymentStatus: 'pending' | 'pending_verification' | 'paid' | 'rejected' | 'failed';
   status: string;
+  paymentTransactionId?: string;
   createdAt: string;
 }
 
